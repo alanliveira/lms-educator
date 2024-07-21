@@ -2,7 +2,7 @@ class User < ApplicationRecord
   rolify
 
   has_secure_password
-  
+
   generates_token_for :email_verification, expires_in: 1.days do
     email
   end
@@ -19,8 +19,15 @@ class User < ApplicationRecord
 
   has_many :sessions, dependent: :destroy
 
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, allow_nil: true, length: { minimum: 12 }
+  validates :email,
+            presence: true,
+            uniqueness: true,
+            format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password,
+            allow_nil: true,
+            length: { minimum: 8, maximum: 20 },
+            format: { with: /(?=.*[A-Z])(?=.*[!@#$&*])/,
+            message: "deve conter pelo menos uma letra maiúscula e um símbolo especial" }
 
   normalizes :email, with: -> { _1.strip.downcase }
 
