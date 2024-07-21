@@ -26,8 +26,8 @@ class User < ApplicationRecord
   validates :password,
             allow_nil: true,
             length: { minimum: 8, maximum: 20 },
-            format: { with: /(?=.*[A-Z])(?=.*[!@#$&*])/,
-            message: "deve conter pelo menos uma letra maiúscula e um símbolo especial" }
+            format: { with: /(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$&*]|.*[A-Z])/,
+                      message: "Deve conter letras, números e pelo menos um caractere especial ou uma letra maiúscula" }
 
   normalizes :email, with: -> { _1.strip.downcase }
 
