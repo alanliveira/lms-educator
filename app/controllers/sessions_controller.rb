@@ -2,6 +2,8 @@ class SessionsController < ApplicationController
   skip_before_action :authenticate, only: %i[ new create ]
   before_action :set_session, only: :destroy
 
+  layout 'authentication'
+
   def index
     @sessions = Current.user.sessions.order(created_at: :desc)
   end

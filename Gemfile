@@ -87,8 +87,8 @@ group :development do
   # An opinionated language server for Ruby
   gem 'ruby-lsp'
 
-  # Lint your ERB or HTML files
-  gem 'erb_lint'
+  # A normaliser/beautifier for HTML that also understands embedded Ruby
+  gem 'htmlbeautifier'
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem 'rack-mini-profiler'

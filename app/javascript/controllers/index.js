@@ -6,3 +6,6 @@ import { application } from "./application"
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import UiSidebarController from "./ui_sidebar_controller"
+application.register("ui-sidebar", UiSidebarController)

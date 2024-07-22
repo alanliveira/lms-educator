@@ -1,6 +1,8 @@
 class PasswordsController < ApplicationController
   before_action :set_user
 
+  layout 'authentication'
+
   def edit
   end
 
