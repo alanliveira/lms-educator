@@ -7,5 +7,8 @@ import { application } from "./application"
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import UiDarkModeController from "./ui_dark_mode_controller"
+application.register("ui-dark-mode", UiDarkModeController)
+
 import UiSidebarController from "./ui_sidebar_controller"
 application.register("ui-sidebar", UiSidebarController)
