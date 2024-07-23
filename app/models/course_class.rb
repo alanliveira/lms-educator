@@ -1,6 +1,6 @@
 class CourseClass < ApplicationRecord
-  has_rich_text :description
-  has_one_attached :thumbnail
+  belongs_to :course
 
-  validates :name, :description, :thumbnail, presence: true
+  has_rich_text  :description
+  has_one_attached :thumbnail
 end
