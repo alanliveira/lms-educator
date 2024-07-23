@@ -6,3 +6,6 @@ import 'flowbite'
 import 'flowbite'
 import 'flowbite-datepicker'
 
+
+import "trix"
+import "@rails/actiontext"
