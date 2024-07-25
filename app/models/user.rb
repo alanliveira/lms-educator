@@ -11,11 +11,7 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
-  after_create :assign_default_role
-
-  def assign_default_role
-    self.add_role(:student) if self.roles.blank?
-  end
+  has_many :company, through: :company_users
 
   has_many :sessions, dependent: :destroy
 
@@ -37,6 +33,10 @@ class User < ApplicationRecord
 
   before_create do
     self.active = false
+  end
+
+  after_create do
+    self.add_role(:student) if self.roles.blank?
   end
 
   after_update if: :password_digest_previously_changed? do

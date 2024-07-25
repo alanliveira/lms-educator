@@ -3,14 +3,21 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="ui-dark-mode"
 export default class extends Controller {
   connect() {
+    this.colorTheme()
+  }
+
+  colorTheme() {
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlTarget = document.querySelector('html');
 
     // Change the icons inside the button based on previous settings
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       themeToggleLightIcon.classList.remove('hidden');
+      htmlTarget.classList.add('dark')
     } else {
       themeToggleDarkIcon.classList.remove('hidden');
+      htmlTarget.classList.remove('dark')
     }
 
     const themeToggleBtn = document.getElementById('theme-toggle');

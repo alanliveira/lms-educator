@@ -1,14 +1,35 @@
-<p style="color: green"><%= notice %></p>
-
-<h1>Courses</h1>
-
-<div id="courses">
-  <% @courses.each do |course| %>
-    <%= render course %>
-    <p>
-      <%= link_to "Show this course", course %>
-    </p>
-  <% end %>
-</div>
-
-<%= link_to "New course", new_course_path %>
+<div id="main-content" class="relative w-full max-w-screen-2xl mx-auto h-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
+  <main>
+    <div class="px-4 pt-6 2xl:px-0">
+      <div class="grid gap-4 xl:grid-cols-1 2xl:grid-cols-3">
+        <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
+          <div class="flex items-center mb-4 sm:mb-0">
+            <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Courses</h1>
+          </div>
+          <% if Current.user.has_role?(:admin) %>
+            <%= link_to "New course",
+                        new_course_path,
+                        class: 'text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800' %>
+          <% end %>
+        </div>
+        <div class="md:p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-1 dark:border-gray-700 dark:bg-gray-800">
+          <p style="color: green"><%= notice %></p>
+          <% if  @courses.present? %>
+            <div id="courses">
+              <% @courses.each do |course| %>
+                <%= render course %>
+                <p>
+                  <%= link_to "Show this course", course %>
+                </p>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="">
+              <p> nenhum cursos liberado </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

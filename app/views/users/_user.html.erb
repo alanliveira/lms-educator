@@ -1,0 +1,20 @@
+<div id="<%= dom_id user %>">
+  <p>
+    <strong>Name:</strong>
+    <%= user.full_name %>
+  </p>
+  <p>
+    <strong>Email:</strong>
+    <%= user.email %>
+  </p>
+  <p>
+    <strong>Department:</strong>
+    <%= user.department %>
+  </p>
+  <p>
+    <strong>Role:</strong>
+    <%= 'Admin' if user.has_role?(:admin) && Current.user.has_role?(:admin) %>
+    <%= 'Empresa' if user.has_role?(:company) %>
+    <%= 'Aluno' if user.has_role?(:student) %>
+  </p>
+</div>
