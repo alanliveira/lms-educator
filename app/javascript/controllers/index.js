@@ -12,3 +12,6 @@ application.register("ui-dark-mode", UiDarkModeController)
 
 import UiSidebarController from "./ui_sidebar_controller"
 application.register("ui-sidebar", UiSidebarController)
+
+import PagesTrakedUserController from "./pages_traked_user_controller"
+application.register("ui-traked-user", PagesTrakedUserController)

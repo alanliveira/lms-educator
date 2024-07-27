@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  generates_token_for :email_verification, expires_in: 1.days do
+  generates_token_for :email_verification, expires_in: 1.day do
     email
   end
 
@@ -12,6 +12,7 @@ class User < ApplicationRecord
   end
 
   has_many :company, through: :company_users
+  has_many :histories, dependent: :destroy
 
   has_many :sessions, dependent: :destroy
 
@@ -22,7 +23,7 @@ class User < ApplicationRecord
   validates :password,
             allow_nil: true,
             length: { minimum: 8, maximum: 20 },
-            format: { with: /(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$&*]|.*[A-Z])/,
+            format: { with: /(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#{::Regexp.last_match(0)}*]|.*[A-Z])/,
                       message: "Deve conter letras, números e pelo menos um caractere especial ou uma letra maiúscula" }
 
   normalizes :email, with: -> { _1.strip.downcase }
@@ -36,7 +37,7 @@ class User < ApplicationRecord
   end
 
   after_create do
-    self.add_role(:student) if self.roles.blank?
+    add_role(:student) if roles.blank?
   end
 
   after_update if: :password_digest_previously_changed? do

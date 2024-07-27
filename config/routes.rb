@@ -9,11 +9,20 @@ Rails.application.routes.draw do
   # Defines the root path route ('/')
   root 'courses#index'
 
-  resources :courses
+  resources :courses do
+    resources :course_classes
+  end
 
   resources :dashboard, only: [:index]
 
-  resources :users, only: [:index]
+  resources :users, only: [:index, :new, :create] do
+    collection do
+      resources :histories, only: [:create]
+    end
+    member do
+      put :status
+    end
+  end
 
   resources :sessions, only: [:index, :show, :destroy]
 

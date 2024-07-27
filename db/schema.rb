@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_020638) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_27_035124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -76,6 +76,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_020638) do
     t.bigint "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
     t.index ["course_id"], name: "index_course_classes_on_course_id"
   end
 
@@ -83,6 +84,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_020638) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+  end
+
+  create_table "histories", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "action"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_histories_on_user_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -129,5 +139,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_020638) do
   add_foreign_key "company_users", "companies"
   add_foreign_key "company_users", "users"
   add_foreign_key "course_classes", "courses"
+  add_foreign_key "histories", "users"
   add_foreign_key "sessions", "users"
 end

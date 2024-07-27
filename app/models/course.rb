@@ -1,6 +1,7 @@
 class Course < ApplicationRecord
-  has_many :course_classes
+  has_many :course_classes, dependent: :destroy
 
-  has_rich_text  :description
   has_one_attached :thumbnail
+
+  validates :name, :description, presence: true
 end

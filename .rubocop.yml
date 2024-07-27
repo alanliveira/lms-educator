@@ -18,4 +18,7 @@ AllCops:
   TargetRubyVersion: 3.3.0
   Style/StringLiterals:
     EnforcedStyle: single_quotes
-
+  Style/Documentation:
+    Enabled: false
+  Style/FrozenStringLiteralComment:
+    Enabled: false
