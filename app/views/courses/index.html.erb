@@ -1,37 +1,31 @@
-<div id="main-content" class="relative w-full max-w-screen-2xl mx-auto h-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
-  <main>
-    <div class="px-4 pt-6 2xl:px-0">
-      <div class="grid gap-4 xl:grid-cols-1 2xl:grid-cols-3">
-        <%# Notificações %>
-        <%= render 'shared/notification' %>
-        <%# cabelaçho %>
-        <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
-          <%# Título %>
-          <div class="flex items-center mb-4 sm:mb-0">
-            <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              <%= Course.model_name.human.pluralize %>
-            </h1>
-          </div>
-          <%# Ação principal %>
-          <% if Current.user.has_role?(:admin) %>
-            <%= link_to "New course",
+<div class="grid w-full grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+  <div class="mb-4 col-span-full xl:mb-2">
+    <%= render 'shared/notification' %>
+    <div class="flex items-center mb-4 sm:mb-0">
+      <%# cabelaçho %>
+      <h1 class="text-xl w-full flex justify-between font-semibold text-gray-900 sm:text-2xl dark:text-white">
+        <%= Course.model_name.human.pluralize %>
+        <%# Ação principal %>
+        <% if Current.user.has_role?(:admin) %>
+          <%= link_to "New course",
                         new_course_path,
                         class: 'text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800' %>
-          <% end %>
-        </div>
-        <%# Corpo %>
-        <div class="grid xl:grid-cols-4 xl:gap-4 lg:grid-cols-3 lg:gap-3 md:grid-cols-2 md:gap-2 sm:grid-cols-1 sm:gap-2 md:p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-1 dark:border-gray-700 dark:bg-gray-800">
-          <% if  @courses.present? %>
-            <% @courses.each do |course| %>
-              <%= render course %>
-            <% end %>
-          <% else %>
-            <div class="">
-              <p> nenhum cursos liberado </p>
-            </div>
-          <% end %>
-        </div>
-      </div>
+        <% end %>
+      </h1>
     </div>
-  </main>
+  </div>
+  <%# Corpo %>
+  <div class="col-span-full">
+    <div class="grid 2xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+      <% if  @courses.present? %>
+        <% @courses.each do |course| %>
+          <%= render course %>
+        <% end %>
+      <% else %>
+        <div class="">
+          <p> nenhum cursos liberado </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
