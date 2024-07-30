@@ -1,0 +1,13 @@
+pt-BR:
+  activerecord:
+    models:
+      course_class:
+        one: Aula
+        other: Aulas
+    attributes:
+      course_class:
+        name: Nome
+        description: Descrição
+        thumbnail: Foto de capa
+        video: Arquivo de vídeo
+        attachments: Anexos

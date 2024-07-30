@@ -1,10 +1,6 @@
 class CourseClassesController < ApplicationController
   before_action :find_course
-  before_action :find_course_class, except: [:index, :new, :create]
-
-  def index
-    @course_classs = CourseClass.all
-  end
+  before_action :find_course_class, except: [:new, :create]
 
   def show; end
 

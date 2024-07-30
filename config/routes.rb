@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   root 'courses#index'
 
   resources :courses do
-    resources :course_classes
+    resources :course_classes, except: [:index]
   end
 
   resources :dashboard, only: [:index]
