@@ -13,11 +13,17 @@ export default class extends Controller {
 
     // Change the icons inside the button based on previous settings
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      themeToggleLightIcon.classList.remove('hidden');
       htmlTarget.classList.add('dark')
+
+      if(!themeToggleLightIcon) return;
+    
+      themeToggleLightIcon.classList.remove('hidden');
     } else {
-      themeToggleDarkIcon.classList.remove('hidden');
       htmlTarget.classList.remove('dark')
+
+      if(!themeToggleDarkIcon) return;
+      
+      themeToggleDarkIcon.classList.remove('hidden');
     }
 
     const themeToggleBtn = document.getElementById('theme-toggle');
