@@ -11,8 +11,8 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
-  has_many :company_users, dependent: :destroy
-  has_many :companies, through: :company_users
+  has_one :company_user, dependent: :destroy
+  has_one :company, through: :company_user
   has_many :histories, dependent: :destroy
 
   has_many :sessions, dependent: :destroy
@@ -29,7 +29,7 @@ class User < ApplicationRecord
 
   normalizes :email, with: -> { _1.strip.downcase }
 
-  accepts_nested_attributes_for :company_users
+  accepts_nested_attributes_for :company_user
 
   before_validation if: :email_changed?, on: :update do
     self.verified = false

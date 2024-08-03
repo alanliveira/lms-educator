@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
   resources :dashboard, only: [:index]
 
-  resources :users, only: [:index, :new, :create, :show] do
+  resources :users, only: [:index, :new, :create, :show, :edit, :update] do
     collection do
       resources :histories, only: [:create]
     end

@@ -30,7 +30,7 @@
           <%= 'Estudante' if user.has_role?(:company) %>
         </div>
         <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-          <%= user.companies.first.fantasy_name %>
+          <%= user.company.fantasy_name %>
         </div>
       </div>
     <% end %>

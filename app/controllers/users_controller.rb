@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :find_user, only: [:status, :show]
+  before_action :find_user, only: [:status, :show, :edit, :update]
 
   def index
     @users = User.order(id: :desc).page(params[:page]).per(params[:per])
@@ -33,10 +33,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit; end
+
+  def update
+    if @user.update(user_params)
+      redirect_to @user, notice: "User was successfully updated.", status: :see_other
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def find_user
-    @user = User.find(params[:id])
+    @user = User.includes(:company_user).where(id: params[:id]).first
   end
 
   def user_params
@@ -45,6 +55,6 @@ class UsersController < ApplicationController
                                  :department,
                                  :full_name,
                                  :active,
-                                 company_users_attributes: [:company_id])
+                                 company_user_attributes: [:company_id])
   end
 end
