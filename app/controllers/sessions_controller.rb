@@ -8,13 +8,12 @@ class SessionsController < ApplicationController
     @sessions = Current.user.sessions.order(created_at: :desc)
   end
 
-  def new
-  end
+  def new; end
 
   def create
-    if user = User.authenticate_by(email: params[:email], password: params[:password], active: true)
+    if user = User.authenticate_by(user_params.merge!({ active: true }))
       @session = user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
+      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true, max_age: Time.zone.now.end_of_day }
 
       History.create(user:, action: "Entrou na plataforma")
 
@@ -34,5 +33,9 @@ class SessionsController < ApplicationController
 
   def set_session
     @session = Current.user.sessions.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :password)
   end
 end

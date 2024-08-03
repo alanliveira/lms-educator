@@ -11,7 +11,8 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
-  has_many :company, through: :company_users
+  has_many :company_users, dependent: :destroy
+  has_many :companies, through: :company_users
   has_many :histories, dependent: :destroy
 
   has_many :sessions, dependent: :destroy
@@ -28,16 +29,22 @@ class User < ApplicationRecord
 
   normalizes :email, with: -> { _1.strip.downcase }
 
+  accepts_nested_attributes_for :company_users
+
   before_validation if: :email_changed?, on: :update do
     self.verified = false
   end
 
   before_create do
-    self.active = false
+    self.active = false unless active?
   end
 
   after_create do
     add_role(:student) if roles.blank?
+  end
+
+  after_create_commit do
+    UserMailer.with(user: self).email_verification.deliver_later if active? && !verified?
   end
 
   after_update if: :password_digest_previously_changed? do
