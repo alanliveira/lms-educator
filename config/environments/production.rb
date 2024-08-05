@@ -66,7 +66,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "see_tech_aprenda_production"
 
   config.action_mailer.delivery_method = :resend
-  config.action_mailer.default_url_options = { host: ENV.fetch('EMAIL_HOST') }
+  config.action_mailer.default_url_options = { host: 'aprenda.seetech.com.br' }
   config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
@@ -91,6 +91,6 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  config.hosts << ".seetech.com.br"
+  config.hosts << "aprenda.seetech.com.br"
   config.hosts << "portal-educacional.onrender.com"
 end
