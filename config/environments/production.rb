@@ -92,4 +92,5 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   config.hosts << ".seetech.com.br"
+  config.hosts << "portal-educacional.onrender.com"
 end
