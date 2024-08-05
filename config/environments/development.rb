@@ -26,7 +26,7 @@ Rails.application.configure do
 
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{Time.zone.now.end_of_day}"
     }
   else
     config.action_controller.perform_caching = false
@@ -40,9 +40,9 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-      address: "localhost",
-      port: 1025,
-      enable_starttls_auto: false
+    address: "localhost",
+    port: 1025,
+    enable_starttls_auto: false
   }
 
   # Don't care if the mailer can't send.
@@ -80,4 +80,6 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  config.hosts << ".localhost:3000"
 end

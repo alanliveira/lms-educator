@@ -2,8 +2,8 @@ class User < ApplicationRecord
   rolify
 
   has_secure_password
-  
-  generates_token_for :email_verification, expires_in: 1.days do
+
+  generates_token_for :email_verification, expires_in: 1.day do
     email
   end
 
@@ -11,25 +11,40 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
-  after_create :assign_default_role
-
-  def assign_default_role
-    self.add_role(:student) if self.roles.blank?
-  end
+  has_one :company_user, dependent: :destroy
+  has_one :company, through: :company_user
+  has_many :histories, dependent: :destroy
 
   has_many :sessions, dependent: :destroy
 
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, allow_nil: true, length: { minimum: 12 }
+  validates :email,
+            presence: true,
+            uniqueness: true,
+            format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password,
+            allow_nil: true,
+            length: { minimum: 8, maximum: 20 },
+            format: { with: /(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#{::Regexp.last_match(0)}*]|.*[A-Z])/,
+                      message: "Deve conter letras, números e pelo menos um caractere especial ou uma letra maiúscula" }
 
   normalizes :email, with: -> { _1.strip.downcase }
+
+  accepts_nested_attributes_for :company_user
 
   before_validation if: :email_changed?, on: :update do
     self.verified = false
   end
 
   before_create do
-    self.active = false
+    self.active = false unless active?
+  end
+
+  after_create do
+    add_role(:student) if roles.blank?
+  end
+
+  after_create_commit do
+    UserMailer.with(user: self).email_verification.deliver_later if active? && !verified?
   end
 
   after_update if: :password_digest_previously_changed? do

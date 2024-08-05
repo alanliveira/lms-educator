@@ -1,0 +1,14 @@
+pt-BR:
+  activerecord:
+    models:
+      company:
+        one: Empresa
+        other: Empresas
+    attributes:
+      company:
+        name: Razão Social
+        fantasy_name: Npme Fantasia
+        cnpj: CNPJ
+        address: Endereço
+        logo: Logotipo
+        owner: Proprietário

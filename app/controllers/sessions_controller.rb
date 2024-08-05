@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
-  skip_before_action :authenticate, only: %i[ new create ]
-
+  skip_before_action :authenticate, only: %i[new create]
   before_action :set_session, only: :destroy
 
   layout 'authentication'
@@ -9,13 +8,14 @@ class SessionsController < ApplicationController
     @sessions = Current.user.sessions.order(created_at: :desc)
   end
 
-  def new
-  end
+  def new; end
 
   def create
-    if user = User.authenticate_by(email: params[:email], password: params[:password], active: true)
+    if user = User.authenticate_by(user_params.merge!({ active: true }))
       @session = user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
+      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true, max_age: Time.zone.now.end_of_day }
+
+      History.create(user:, action: "Entrou na plataforma")
 
       redirect_to set_redirect_to(user), notice: "Signed in successfully"
     else
@@ -24,12 +24,18 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    @session.destroy; redirect_to(sessions_path, notice: "That session has been logged out")
+    History.create(user: Current.user, action: "Saiu da plataforma")
+    @session.destroy
+    redirect_to(sessions_path, notice: "That session has been logged out")
   end
 
   private
 
   def set_session
     @session = Current.user.sessions.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :password)
   end
 end

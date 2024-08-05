@@ -1,0 +1,46 @@
+<%= form_with(model: [course, course_class], class: 'max-w-sm mx-auto') do |form| %>
+  <% if course_class.errors.any? %>
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-800 dark:text-red-50" role="alert">
+      <h2 class="font-medium"><%= pluralize(course_class.errors.count, "error") %> prohibited this course from being saved:</h2>
+      <ul class="pl-2 max-w-md space-y-1 list-disc list-inside">
+        <% course_class.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="mb-5">
+    <%= form.label      :name,
+                        class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-white' %>
+    <%= form.text_field :name,
+                        class: 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %>
+  </div>
+  <div class="mb-5">
+    <%= form.label      :description,
+                        class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-white' %>
+    <%= form.text_area  :description,
+                        rows: 5,
+                        class: 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %>
+  </div>
+  <div class="mb-5">
+    <%= form.label      :thumbnail,
+                        class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-white' %>
+    <%= form.file_field :thumbnail,
+                        class: 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400' %>
+  </div>
+  <div class="mb-5">
+    <%= form.label      :video,
+                        class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-white' %>
+    <%= form.file_field :video,
+                        class: 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400' %>
+  </div>
+  <div class="mb-5">
+    <%= form.label      :attachments,
+                        class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-white' %>
+    <%= form.file_field :attachments,
+                        class: 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400' %>
+  </div>
+  <%= form.button       'Criar',
+                        class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800' %>
+</div>
+<% end %>

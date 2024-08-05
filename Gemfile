@@ -27,7 +27,7 @@ gem 'stimulus-rails'
 gem 'cssbundling-rails'
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem 'jbuilder'
+# gem 'jbuilder'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '>= 4.0.1'
@@ -47,7 +47,6 @@ gem 'bootsnap', require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem 'image_processing', '~> 1.2'
 
-
 # An authentication system generator for Rails applications.
 gem 'authentication-zero'
 
@@ -59,6 +58,19 @@ gem 'rolify'
 
 # Minimal authorization through OO design and pure Ruby classes
 gem 'pundit'
+
+# Kaminari is a Scope & Engine based, clean, powerful, agnostic, customizable and sophisticated paginator for Rails 4+
+gem 'kaminari'
+
+# Ransack is the successor to the MetaSearch gem. It improves and expands upon MetaSearch's functionality,
+# but does not have a 100%-compatible API.
+gem 'ransack'
+
+# Microsoft Azure Storage Library for Ruby
+gem 'azure-storage-blob', require: false
+
+# A set of common locale data and translations to internationalize and/or localize your Rails applications.
+gem 'rails-i18n'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -86,6 +98,9 @@ group :development do
 
   # An opinionated language server for Ruby
   gem 'ruby-lsp'
+
+  # A normaliser/beautifier for HTML that also understands embedded Ruby
+  gem 'htmlbeautifier'
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem 'rack-mini-profiler'

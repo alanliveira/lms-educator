@@ -1,0 +1,54 @@
+<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+  <td class="w-4 p-4">
+    <div class="flex items-center">
+      <input id="checkbox-1" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+      <label for="checkbox-1" class="sr-only">checkbox</label>
+    </div>
+  </td>
+  <td class="px-6 py-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+    <%= user.id %>
+  </td>
+  <td class="flex items-center px-6 py-4 whitespace-nowrap">
+    <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+      <div class="text-base font-semibold text-gray-900 dark:text-white">
+        <%= user.full_name %>
+      </div>
+      <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        <%= user.email %>
+      </div>
+    </div>
+  </td>
+  <td class="px-6 py-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+    <%= user.department %>
+  </td>
+  <td class="px-6 py-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+    <%= 'Administrador' if user.has_role?(:admin) %>
+    <% unless user.has_role?(:admin) %>
+      <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div class="text-base font-semibold text-gray-900 dark:text-white">
+          <%= 'Estudante' if user.has_role?(:student) %>
+          <%= 'Estudante' if user.has_role?(:company) %>
+        </div>
+        <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+          <%= user.company.fantasy_name %>
+        </div>
+      </div>
+    <% end %>
+  </td>
+  <td class="px-6 py-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
+    <div class="flex items-center">
+      <% if user.active? %>
+        <div class="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div>
+        Ativo
+      <% else %>
+        <div class="h-2.5 w-2.5 rounded-full bg-red-400 mr-2"></div>
+        Inativo
+      <% end %>
+    </div>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap">
+    <%= link_to "Visualizar",
+                user_path(user),
+                class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800' %>
+  </td>
+</tr>

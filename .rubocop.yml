@@ -16,33 +16,9 @@ require:
 inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 3.3.0
-    Exclude:
-    - '.pryrc'
-    - '.irbrc'
-    - Rakefile
-    - 'bin/*'
-    - 'coverage/*'
-    - 'spec/fixtures/**/*'
-    - 'spec/**/*helper.rb'
-    - 'spec/support/**/*.rb'
-    - 'db/**/*.rb'
-    - '**/schema.rb'
-    - 'lib/tasks/**/*.rake'
-    - 'lib/gems/**/*'
-    - 'app/services/*.rb'
-    - 'frontend/**/*'
-    - 'angular-cli.json'
-    - 'package.json'
-    - 'package-lock.json'
-    - 'yarn-lock.json'
-  Bundler/GemComment:
-    Enabled: true
-  Bundler/OrderedGems:
-    Enabled: true
-  Rails:
-    Enabled: true
-  Rails/EnvironmentVariableAccess:
-    Enabled: true
-  Style/StringLiterals:
-    EnforcedStyle: single_quotes
-
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/Documentation:
+  Enabled: false

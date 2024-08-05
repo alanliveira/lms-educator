@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate
-    if session_record = Session.find_by_id(cookies.signed[:session_token])
+    if session_record = Session.find_by(id: cookies.signed[:session_token])
       Current.session = session_record
     else
       redirect_to sign_in_path
@@ -21,13 +21,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_redirect_to(user = Current.user)
-    if user.has_role? :admin
-      dashboard_admin_path
-    elsif user.has_role? :company
-      dashboard_company_path
-    elsif user.has_role? :student
-      dashboard_student_path
-    end
+    root_path
   end
 
   def pundit_user
@@ -36,7 +30,7 @@ class ApplicationController < ActionController::Base
 
   def user_not_authorized(exception)
     policy_name = exception.policy.class.to_s.underscore
- 
+
     flash[:alert] = t "#{policy_name}.#{exception.query}", scope: "pundit", default: :default
     redirect_back_or_to(set_redirect_to)
   end
