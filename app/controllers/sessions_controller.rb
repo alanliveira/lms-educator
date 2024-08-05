@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
   skip_before_action :authenticate, only: %i[new create]
   before_action :set_session, only: :destroy
+  before_action :find_company, only: [:new]
 
   layout 'authentication'
 
@@ -30,6 +31,10 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  def find_company
+    @company = Company.find_by(identifier: params.dig(:company, :identifier))
+  end
 
   def set_session
     @session = Current.user.sessions.find(params[:id])

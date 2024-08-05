@@ -1,0 +1,19 @@
+<div class="col-span-2 ">
+  <div data-controller="ui-video" data-action="turbo:load->ui-video#target" class="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
+    <video id="my-player"
+           class="w-full h-full"
+           controls
+           width="500"
+           poster="<%= rails_blob_path course_class.thumbnail %>"
+           preload="auto">
+      <source src="<%= rails_blob_path course_class.video %>" />
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a
+        web browser that
+        <a href="https://videojs.com/html5-video-support/" target="_blank">
+          supports HTML5 video
+        </a>
+      </p>
+    </video>
+  </div>
+</div>

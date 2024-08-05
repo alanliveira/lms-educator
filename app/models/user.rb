@@ -30,6 +30,7 @@ class User < ApplicationRecord
   normalizes :email, with: -> { _1.strip.downcase }
 
   accepts_nested_attributes_for :company_user
+  accepts_nested_attributes_for :company
 
   before_validation if: :email_changed?, on: :update do
     self.verified = false

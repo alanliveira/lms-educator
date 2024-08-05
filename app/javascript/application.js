@@ -3,7 +3,7 @@ import "@hotwired/turbo-rails"
 import "./controllers"
 
 import 'flowbite'
-import 'flowbite'
+import 'flowbite/dist/flowbite.turbo'
 import 'flowbite-datepicker'
 
 import "trix"
