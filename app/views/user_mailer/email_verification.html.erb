@@ -1,7 +1,7 @@
 <p>Olá,</p>
 <p>Isso é para confirmar que <%= @user.email %> é o email que você deseja usar em sua conta. Se você perder sua senha, é para lá que enviaremos um link de redefinição.</p>
 <p><strong>Você deve clicar no link abaixo para confirmar que recebeu este email.</strong></p>
-<p><%= link_to "Sim, use este email para minha conta", identity_email_verification_url(host: 'aprenda.seetech.com.br', sid: @signed_id) %></p>
+<p><%= link_to "Sim, use este email para minha conta", identity_email_verification_url(host: ENV.fetch('EMAIL_HOST'), sid: @signed_id) %></p>
 <p>ou copie esse link</p>
 <p><%= identity_email_verification_url(subdomain: 'aprenda.seetech', sid: @signed_id) %></p>
 <hr>

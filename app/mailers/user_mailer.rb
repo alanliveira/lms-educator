@@ -1,6 +1,6 @@
 class UserMailer < ApplicationMailer
   # this domain must be verified with Resend
-  default from: "See tech<#{ENV.fetch('EMAIL_ADMINISTRATION_SYSTEM')}>",
+  default from: "See tech <#{ENV.fetch('EMAIL_ADMINISTRATION_SYSTEM')}>",
           host: 'https://aprenda.seetech.com.br'
 
   def password_reset
