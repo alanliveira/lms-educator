@@ -20,7 +20,6 @@ class SessionsController < ApplicationController
 
       redirect_to set_redirect_to(user), notice: "Login feito com sucesso"
     else
-      # binding.irb
       redirect_to sign_in_path(email_hint: params[:email], company: { identifier: params.dig(:company, :identifier) }), alert: "O email e a senha estão incorretos"
     end
   end
