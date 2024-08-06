@@ -5,7 +5,7 @@ class UsersController < ApplicationController
     @users = if Current.user.has_role?(:admin)
                User.order(id: :desc).page(params[:page]).per(params[:per])
              else
-               User.company.users.order(id: :desc).page(params[:page]).per(params[:per])
+               Current.user.company.users.order(id: :desc) # .page(params[:page]).per(params[:per])
              end
   end
 
