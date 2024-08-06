@@ -2,7 +2,11 @@ class UsersController < ApplicationController
   before_action :find_user, only: [:status, :show, :edit, :update]
 
   def index
-    @users = User.order(id: :desc).page(params[:page]).per(params[:per])
+    @users = if Current.user.has_role?(:admin)
+               User.order(id: :desc).page(params[:page]).per(params[:per])
+             else
+               User.company.users.order(id: :desc).page(params[:page]).per(params[:per])
+             end
   end
 
   def show; end

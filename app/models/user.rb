@@ -44,7 +44,7 @@ class User < ApplicationRecord
     add_role(:student) if roles.blank?
   end
 
-  after_create_commit do
+  after_commit do
     UserMailer.with(user: self).email_verification.deliver_later if active? && !verified?
   end
 

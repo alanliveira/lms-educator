@@ -27,7 +27,7 @@
       <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
         <div class="text-base font-semibold text-gray-900 dark:text-white">
           <%= 'Estudante' if user.has_role?(:student) %>
-          <%= 'Estudante' if user.has_role?(:company) %>
+          <%= 'Empresa' if user.has_role?(:company) %>
         </div>
         <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
           <%= user.company.fantasy_name %>
