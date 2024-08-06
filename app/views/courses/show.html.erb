@@ -1,12 +1,17 @@
-<div class="grid w-full grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+<div class="grid w-full grid-cols-1 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
   <div class="mb-4 col-span-full xl:mb-2">
     <%= render 'shared/notification' %>
     <div class="flex items-center mb-4 sm:mb-0">
       <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-        <%= link_to "Back to courses",
-                    courses_path,
-                    class: 'text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800' %>
-        <%= [Course.model_name.human.singularize, @course.name].join(' - ') %>
+        <div class="flex">
+          <%= link_to courses_path(@course),
+                    class: 'font-medium rounded-lg text-sm px-0 pt-1.5' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+              <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clip-rule="evenodd" />
+            </svg>
+          <% end %>
+          <%= [Course.model_name.human.singularize, @course.name].join(' - ') %>
+        </div>
       </h1>
     </div>
   </div>
