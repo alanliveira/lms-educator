@@ -13,6 +13,7 @@ class UserMailer < ApplicationMailer
   def email_verification
     @user = params[:user]
     @signed_id = @user.generate_token_for(:email_verification)
+    @company_identifier = @user&.company&.identifier || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).identifier
 
     mail to: @user.email, subject: "Valide o seu email"
   end

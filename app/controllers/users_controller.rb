@@ -23,7 +23,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new(active: true)
-    @user.company_users.build
+    @user.company_user = CompanyUser.new
   end
 
   def create
