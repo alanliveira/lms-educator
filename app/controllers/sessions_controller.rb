@@ -18,9 +18,10 @@ class SessionsController < ApplicationController
 
       History.create(user:, action: "Entrou na plataforma")
 
-      redirect_to set_redirect_to(user), notice: "Signed in successfully"
+      redirect_to set_redirect_to(user), notice: "Login feito com sucesso"
     else
-      redirect_to sign_in_path(email_hint: params[:email]), alert: "That email or password is incorrect"
+      # binding.irb
+      redirect_to sign_in_path(email_hint: params[:email], company: { identifier: params.dig(:company, :identifier) }), alert: "O email e a senha estão incorretos"
     end
   end
 
