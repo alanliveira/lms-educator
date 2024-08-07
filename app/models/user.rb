@@ -40,6 +40,13 @@ class User < ApplicationRecord
     self.active = false unless active?
   end
 
+  before_destroy do
+    if company_user.owner?
+      errors.add(:base, "Não é possível excluir um usuário que é proprietário de uma empresa")
+      throw :abort
+    end
+  end
+
   after_create do
     add_role(:student) if roles.blank?
   end
@@ -51,4 +58,6 @@ class User < ApplicationRecord
   after_update if: :password_digest_previously_changed? do
     sessions.where.not(id: Current.session).delete_all
   end
+
+  delegate :owner?, to: :company_user
 end
