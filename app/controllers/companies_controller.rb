@@ -64,6 +64,7 @@ class CompaniesController < ApplicationController
                   :cnpj,
                   :logo,
                   :address,
+                  :identifier,
                   users_attributes: [:full_name,
                                      :department,
                                      :email,
