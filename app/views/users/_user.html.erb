@@ -26,11 +26,11 @@
     <% unless user.has_role?(:admin) %>
       <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
         <div class="text-base font-semibold text-gray-900 dark:text-white">
-          <%= 'Estudante' if user.has_role?(:student) %>
-          <%= 'Empresa' if user.has_role?(:company) %>
+          <%= 'Colaborador' if user.has_role?(:student) %>
+          <%= 'Empresa' if user.has_role?(:company) %><%= ' - Proprietário' if user.company_user.owner? %>
         </div>
         <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-          <%= user.company.fantasy_name %>
+          <%= user.company.name %>
         </div>
       </div>
     <% end %>
@@ -53,12 +53,12 @@
     <% if user.active? %>
       <%= link_to 'Desaprovar',
                   status_user_path(user),
-                  data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente aprovar o usuário?" },
+                  data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente desaprovar o usuário?" },
                   class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800' %>
     <% else %>
       <%= link_to 'Aprovar',
                   status_user_path(user),
-                  data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente desaprovar o usuário?" },
+                  data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente aprovar o usuário?" },
                   class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800' %>
     <% end %>
   </td>

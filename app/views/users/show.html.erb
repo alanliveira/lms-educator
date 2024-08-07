@@ -14,7 +14,7 @@
             <%= tag.span @user.full_name %>
             <span class="font-normal text-sm text-gray-300">
               <%= 'Administrador' if @user.has_role?(:admin) %>
-              <%= 'Empresa' if @user.has_role?(:company) %>
+              <%= "Empresa#{' - Proprietário' if @user.company_user.owner?}" if @user.has_role?(:company) %>
               <%= 'Colaborador' if @user.has_role?(:student) %>
             </span>
           </div>
@@ -54,12 +54,12 @@
                 <% if @user.active? %>
                   <%= link_to "Desaprovar",
                               status_user_path(@user),
-                              data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente aprovar o usuário?" },
+                              data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente desaprovar o usuário?" },
                               class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800' %>
                 <% else %>
                   <%= link_to "Aprovar",
                               status_user_path(@user),
-                              data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente desaprovar o usuário?" },
+                              data: { turbo_prepend: false, turbo_method: :get, turbo_confirm: "Deseja realmente aprovar o usuário?" },
                               class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800' %>
                 <% end %>
                 <%= button_to "Excluir",

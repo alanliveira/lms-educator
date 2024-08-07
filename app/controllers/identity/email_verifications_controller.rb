@@ -6,12 +6,13 @@ class Identity::EmailVerificationsController < ApplicationController
 
   def show
     @user.update! verified: true
-    redirect_to root_path(params: { company: { identifier: params.dig('company', 'identifier') } }), notice: "Obrigado por confurmar o seu endereço de email"
+    redirect_to root_path(params: { company: { identifier: params.dig('company', 'identifier') } }),
+                notice: "Obrigado pela confirmação do seu endereço de email"
   end
 
   def create
     send_email_verification
-    redirect_to root_path, notice: "Enviamos a verificação da conta para o seu email"
+    redirect_to root_path, notice: "Enviamos as instruções de verificação da conta para o seu email"
   end
 
   private
