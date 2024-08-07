@@ -13,31 +13,31 @@ class CourseClassesController < ApplicationController
   def create
     @course_class = @course.course_classes.build(course_class_params)
     if @course_class.save
-      flash[:notice] = "CourseClass successfully created"
+      flash[:notice] = "Aula criada com sucesso"
       redirect_to @course
     else
-      flash[:alert] = "Something went wrong"
+      flash[:alert] = "Erro ao criar aula"
       render :new, status: :unprocessable_entity
     end
   end
 
   def update
     if @course_class.update(course_class_params)
-      flash[:success] = "CourseClass was successfully updated"
+      flash[:notice] = "Aula atualizada com sucesso"
       redirect_to @course
     else
-      flash[:error] = "Something went wrong"
+      flash[:alert] = "Erro ao atualizar a aula"
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     if @course_class.destroy
-      flash[:success] = "CourseClass was successfully deleted"
-      redirect_to course_class_path
+      flash[:notice] = "Aula apagada com sucesso"
+      redirect_to course_path(@course)
     else
-      flash[:error] = "Something went wrong"
-      redirect_to course_class_path
+      flash[:alert] = "Erro ao apagar a aula"
+      render :show, status: :unprocessable_entity
     end
   end
 
