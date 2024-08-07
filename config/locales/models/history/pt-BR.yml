@@ -1,0 +1,10 @@
+pt-BR:
+  activerecord:
+    models:
+      history:
+        one: histórico de acesso
+        other: Históricos de acessos
+    attributes:
+      history:
+        action: Ação
+        created_at: Registrado no dia

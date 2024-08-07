@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :find_user, only: [:status, :show, :edit, :update]
+  before_action :find_user, only: [:status, :show, :edit, :update, :destroy]
 
   def index
     @users = if Current.user.has_role?(:admin)
@@ -15,8 +15,9 @@ class UsersController < ApplicationController
     @user.toggle(:active)
 
     if @user.save
+      flash[:notice] = 'Status do usuário alterado com sucesso!'
       respond_to do |format|
-        format.html { redirect_to users_path }
+        format.html { redirect_back(fallback_location: root_path) }
       end
     else
       render :index, status: :unprocessable_entity
@@ -33,7 +34,7 @@ class UsersController < ApplicationController
     @user.active = true
 
     if @user.save
-      redirect_to @user, notice: "User was successfully created."
+      redirect_to @user, notice: "Usuário criado com sucesso"
     else
       render :new, status: :unprocessable_entity
     end
@@ -43,10 +44,15 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      redirect_to @user, notice: "User was successfully updated.", status: :see_other
+      redirect_to @user, notice: "Usuário alterado com sucesso"
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @user.destroy!
+    redirect_to users_url, notice: "Usuário excluido do sistema."
   end
 
   private

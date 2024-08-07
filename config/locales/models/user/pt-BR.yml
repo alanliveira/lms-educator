@@ -12,3 +12,4 @@ pt-BR:
         password: Senha
         password_confirmation: Confirme a senha
         active: Ativo
+        verified: Email verificado
