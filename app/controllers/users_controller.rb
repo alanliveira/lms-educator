@@ -15,9 +15,11 @@ class UsersController < ApplicationController
     @user.toggle(:active)
 
     if @user.save
-      head :ok
+      respond_to do |format|
+        format.html { redirect_to users_path }
+      end
     else
-      head :unprocessable_entity
+      render :index, status: :unprocessable_entity
     end
   end
 

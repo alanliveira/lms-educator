@@ -21,7 +21,7 @@ Rails.application.routes.draw do
       resources :histories, only: [:create]
     end
     member do
-      put :status
+      get :status
     end
   end
 
