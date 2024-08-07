@@ -1,4 +1,4 @@
-<div class="grid w-full grid-cols-1 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+<div class="grid w-full grid-cols-1 pt-6 2xl:px-4 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
   <div class="mb-4 col-span-full xl:mb-2">
     <%= render 'shared/notification' %>
     <div class="flex items-center mb-4 sm:mb-0">
@@ -17,12 +17,12 @@
   <%# Corpo %>
   <div class="col-span-full">
     <div class="grid 2xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
-      <% if @courses.present? && Current.user.has_role?(:admin) %>
+      <% if false && @courses.present? && !Current.user.has_role?(:student) %>
         <% @courses.each do |course| %>
           <%= render course %>
         <% end %>
       <% else %>
-        <div class="col-span-full md:p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-1 dark:border-gray-700 dark:bg-gray-800">
+        <div class="col-span-full md:p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <span class="text-gray-900 dark:text-white">
             Nenhum cursos liberado
           </span>
