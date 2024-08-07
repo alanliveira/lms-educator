@@ -46,7 +46,7 @@
           </div>
           <div class="mt-6 flex items-center space-x-4">
             <%# Ação principal %>
-            <% if Current.user.has_role?(:admin) %>
+            <% unless Current.user.has_role?(:student) %>
               <div class="flex gap-2">
                 <%= link_to "Editar",
                             edit_user_path(@user),

@@ -22,7 +22,7 @@ class Identity::PasswordResetsController < ApplicationController
 
   def update
     if @user.update(user_params)
-      redirect_to sign_in_path, notice: "Sua senha foi alterada com sucesso. FAça o login"
+      redirect_to sign_in_path, notice: "Sua senha foi alterada com sucesso. Faça o login"
     else
       render :edit, status: :unprocessable_entity
     end
