@@ -5,8 +5,11 @@ class CoursesController < ApplicationController
   def index
     @courses = if Current.user.has_role?(:admin)
                  Course.all
-               else
+               elsif Current.user.has_role?(:company)
                  Current.user.company.courses
+               else
+                 Course.where(id: CompanyCourse.where(company_id: Current.user.company.id, can_be_viewed: true)
+                                               .pluck(:course_id))
                end
   end
 
