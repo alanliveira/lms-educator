@@ -8,7 +8,13 @@ Rails.application.routes.draw do
   # Defines the root path route ('/')
   root 'courses#index'
 
-  resources :companies
+  resources :companies do
+    member do
+      patch :add_course
+      delete 'remove_course/:course_id', to: 'companies#remove_course', as: 'remove_course_from'
+      patch 'access/:course_id', to: 'companies#toggle_access', as: 'course_access'
+    end
+  end
 
   resources :courses do
     resources :course_classes, except: [:index]
