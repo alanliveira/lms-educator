@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  acts_as_paranoid
   rolify
 
   has_secure_password
@@ -13,8 +14,8 @@ class User < ApplicationRecord
 
   has_one :company_user, dependent: :destroy
   has_one :company, through: :company_user
-  has_many :histories, dependent: :destroy
 
+  has_many :histories, dependent: :destroy
   has_many :sessions, dependent: :destroy
 
   validates :email,

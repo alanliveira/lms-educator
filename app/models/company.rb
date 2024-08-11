@@ -1,9 +1,10 @@
 class Company < ApplicationRecord
+  acts_as_paranoid
+
   has_one_attached :logo
 
   has_many :company_users, dependent: :destroy
   has_many :users, through: :company_users
-
   has_many :company_courses, dependent: :destroy
   has_many :courses, through: :company_courses
 

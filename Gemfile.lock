@@ -214,6 +214,8 @@ GEM
     nokogiri (1.16.6-x86_64-linux)
       racc (~> 1.4)
     parallel (1.25.1)
+    paranoia (2.6.4)
+      activerecord (>= 5.1, < 7.2)
     parser (3.3.4.0)
       ast (~> 2.4.1)
       racc
@@ -367,6 +369,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   jsbundling-rails
   kaminari
+  paranoia
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)
