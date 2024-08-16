@@ -4,9 +4,9 @@
            class="w-full h-full"
            controls
            width="500"
-           poster="<%= rails_blob_path course_class.thumbnail %>"
+           poster="<%= rails_blob_path course_class.thumbnail if course_class&.thumbnail&.present? %>"
            preload="auto">
-      <source src="<%= rails_blob_path course_class.video %>" />
+      <source src="<%= rails_blob_path course_class.video if course_class&.video&.present? %>" />
       <p class="vjs-no-js">
         To view this video please enable JavaScript, and consider upgrading to a
         web browser that
