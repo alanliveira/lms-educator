@@ -8,5 +8,5 @@ class CourseClass < ApplicationRecord
 
   has_many_attached :attachments
 
-  validates :name, :description, :video, presence: true
+  validates :name, :description, presence: true
 end
