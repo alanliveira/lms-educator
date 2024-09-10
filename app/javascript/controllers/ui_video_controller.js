@@ -11,15 +11,11 @@ export default class extends Controller {
 
       const video = window.videojs(videoTarget, {
         controls: true,
+        disablePictureInPicture = true,
         autoplay: false,
         preload: 'auto',
         fluid: true
       })
-
-      video.requestPictureInPicture()
-      .catch(error => {
-        alert('Não é possivel utilizar este recurso');
-      });
 
       video.on('ended', function () {
 
