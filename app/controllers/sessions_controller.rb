@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
   skip_before_action :authenticate, only: %i[new create]
   before_action :set_session, only: :destroy
+  before_action :find_company, only: [:new]
 
   layout 'authentication'
 
@@ -17,9 +18,9 @@ class SessionsController < ApplicationController
 
       History.create(user:, action: "Entrou na plataforma")
 
-      redirect_to set_redirect_to(user), notice: "Signed in successfully"
+      redirect_to set_redirect_to(user), notice: "Login feito com sucesso"
     else
-      redirect_to sign_in_path(email_hint: params[:email]), alert: "That email or password is incorrect"
+      redirect_to sign_in_path(email_hint: params[:email], company: { identifier: params.dig(:company, :identifier) }), alert: "O email e a senha estão incorretos"
     end
   end
 
@@ -30,6 +31,10 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  def find_company
+    @company = Company.find_by(identifier: params.dig(:company, :identifier))
+  end
 
   def set_session
     @session = Current.user.sessions.find(params[:id])

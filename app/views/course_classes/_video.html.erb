@@ -1,0 +1,31 @@
+<div class="col-span-2 ">
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
+    <%# 
+    binding.break
+     %>
+    <% if course_class.video.attached? %>
+      <video id="my-player"
+              class="w-full h-full"
+              controls
+              width="500"
+              poster="<%= rails_blob_path course_class.thumbnail %>"
+              data-controller="ui-video" data-action="turbo:load->ui-video#target"
+        preload="auto">
+        <source src="<%= rails_blob_path course_class.video %>" />
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a
+          web browser that
+          <a href="https://videojs.com/html5-video-support/" target="_blank">
+            supports HTML5 video
+          </a>
+        </p>
+      </video>
+    <% else %>
+      <div class="col-span-full md:p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <span class="text-gray-900 dark:text-white">
+          Nenhum conteúdo de mídia disponível
+        </span>
+      </div>
+    <% end %>
+  </div>
+</div>

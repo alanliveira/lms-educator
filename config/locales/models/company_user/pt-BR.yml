@@ -1,0 +1,6 @@
+pt-BR:
+  activerecord:
+    models:
+      company_user:
+        one: Empresa
+        other: Empresas

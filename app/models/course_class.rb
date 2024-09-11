@@ -5,7 +5,8 @@ class CourseClass < ApplicationRecord
 
   has_one_attached :thumbnail
   has_one_attached :video
+
   has_many_attached :attachments
 
-  validates :name, :description, :video, presence: true
+  validates :name, :description, presence: true
 end

@@ -18,3 +18,6 @@ application.register("ui-sidebar", UiSidebarController)
 
 import UiToastNotificationController from "./ui_toast_notification_controller"
 application.register("ui-toast-notification", UiToastNotificationController)
+
+import UiVideoController from "./ui_video_controller"
+application.register("ui-video", UiVideoController)

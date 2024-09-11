@@ -1,0 +1,22 @@
+<div class="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
+  <!-- Card body -->
+  <div class="p-6">
+    <!-- Text -->
+    <p class="mb-2 text-base text-neutral-500 dark:text-neutral-300">
+      <%= course_class.description %>
+    </p>
+  </div>
+  <!-- Card footer -->
+  <% if course_class&.attachments&.present? %>
+    <div class="border-t-2 border-neutral-100 px-6 py-4 dark:border-neutral-500">
+      <p class="mb-2 text-base text-neutral-500 dark:text-neutral-300">Anexos</p>
+      <p class="mb-2 text-base text-neutral-500 dark:text-neutral-300 pt-6">
+        <% course_class.attachments.each do |attachment| %>
+          <%= link_to attachment.filename,
+                      rails_blob_path(attachment, disposition: 'attachment'),
+                      class: 'text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800' %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+</div>

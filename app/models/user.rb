@@ -14,8 +14,8 @@ class User < ApplicationRecord
 
   has_one :company_user, dependent: :destroy
   has_one :company, through: :company_user
-  has_many :histories, dependent: :destroy
 
+  has_many :histories, dependent: :destroy
   has_many :sessions, dependent: :destroy
 
   validates :email,
@@ -31,6 +31,7 @@ class User < ApplicationRecord
   normalizes :email, with: -> { _1.strip.downcase }
 
   accepts_nested_attributes_for :company_user
+  accepts_nested_attributes_for :company
 
   before_validation if: :email_changed?, on: :update do
     self.verified = false
@@ -40,15 +41,24 @@ class User < ApplicationRecord
     self.active = false unless active?
   end
 
+  before_destroy do
+    if company_user.owner?
+      errors.add(:base, "Não é possível excluir um usuário que é proprietário de uma empresa")
+      throw :abort
+    end
+  end
+
   after_create do
     add_role(:student) if roles.blank?
   end
 
-  after_create_commit do
+  after_commit do
     UserMailer.with(user: self).email_verification.deliver_later if active? && !verified?
   end
 
   after_update if: :password_digest_previously_changed? do
     sessions.where.not(id: Current.session).delete_all
   end
+
+  delegate :owner?, to: :company_user
 end

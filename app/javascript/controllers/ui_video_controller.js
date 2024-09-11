@@ -26,7 +26,7 @@ export default class extends Controller {
 
         if (!!nextCourseClass) {
           nextCourseClass.click()
-        }
+        } 
       });
 
       break;

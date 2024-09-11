@@ -1,0 +1,34 @@
+<div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
+  <div class="flex items-center justify-between mb-4">
+    <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Todas as aulas</h5>
+  </div>
+  <div class="flow-root overflow-y-auto h-44 ">
+    <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+      <% course.course_classes.each do |cc| %>
+        <li class="py-3 sm:py-4">
+          <%= link_to course_course_class_path(course, cc), id: dom_id(cc) , class: "#{'course-class-active' if course_class.id == cc.id}" do %>
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <%= image_tag cc.thumbnail,
+                                class: 'w-8 h-8 rounded-full' if cc&.thumbnail&.present? %>
+              </div>
+              <div class="flex-1 min-w-0 ms-4">
+                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                  <% if course_class.id == cc.id %>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Assistindo</span>
+                  <% elsif false %>
+                    <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Concluido</span>
+                  <% end %>
+                  <%= cc.name %>
+                </p>
+                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                  <%= cc.description %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
