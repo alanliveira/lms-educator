@@ -17,7 +17,7 @@ export default class extends Controller {
       })
 
       video.on('ended', function () {
-        alert("O vídeo terminou.");
+        // alert("O vídeo terminou.");
 
         const learnActive = document.querySelector('.course-class-active')
         const [element, courseStep] = learnActive.id.split('course_class_')
@@ -26,9 +26,9 @@ export default class extends Controller {
 
         if (!!nextCourseClass) {
           nextCourseClass.click()
-        } else {
-          alert('Acabou o curso')
-        }
+        } // else {
+        //   alert('Acabou o curso')
+        // }
       });
 
       break;
