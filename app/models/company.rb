@@ -1,4 +1,6 @@
 class Company < ApplicationRecord
+  acts_as_paranoid
+
   has_one_attached :logo
 
   has_many :company_users, dependent: :destroy

@@ -1,4 +1,6 @@
 class CourseClass < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :course
 
   has_one_attached :thumbnail

@@ -72,6 +72,9 @@ gem 'azure-storage-blob', require: false
 # A set of common locale data and translations to internationalize and/or localize your Rails applications.
 gem 'rails-i18n'
 
+# acts_as_paranoid for Rails 5, 6 and 7
+gem 'paranoia'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[ mri windows ]
