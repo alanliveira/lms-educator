@@ -12,6 +12,7 @@ export default class extends Controller {
       const video = window.videojs(videoTarget, {
         controls: true,
         autoplay: false,
+        disablePictureInPicture: true,
         preload: 'auto',
         fluid: true
       })
