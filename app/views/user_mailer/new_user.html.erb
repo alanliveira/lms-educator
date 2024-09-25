@@ -1,2 +1,2 @@
 <p>Olá,</p>
-<p>Funcionário <<@user.full_name>> se cadastrou no portal aprenda, <%= link_to "Clique aqui", status_user_url(host: ENV.fetch('EMAIL_HOST'), sid: @signed_id, params: { id: { @user.id }} ) %> para a aprovação do acesso.</p>
+<p>Funcionário <<@user.full_name>> se cadastrou no portal aprenda, <%= link_to "Clique aqui", status_user_url(host: ENV.fetch('EMAIL_HOST'), sid: @signed_id, params: { id: @user.id } ) %> para a aprovação do acesso.</p>
