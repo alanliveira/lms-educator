@@ -21,7 +21,8 @@ class UserMailer < ApplicationMailer
   def new_user
     @user = params[:user]
     @company_identifier = @user&.company&.identifier || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).identifier
+    @owner_user = @user&.company&.owner || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).owner
 
-    mail to: @company_identifier.email, subject: "Cadastro de novo funcionário"
+    mail to: @owner_user.email, subject: "Cadastro de novo funcionário"
   end
 end
