@@ -14,14 +14,14 @@ class UserMailer < ApplicationMailer
     @user = params[:user]
     @signed_id = @user.generate_token_for(:email_verification)
     @company_identifier = @user&.company&.identifier || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).identifier
-
+    
     mail to: @user.email, subject: "Valide o seu email"
   end
-
+  
   def new_user
     @user = params[:user]
     @company_identifier = user&.company&.identifier || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).identifier
 
-    mail to: @user.email, subject: "Cadastro de novo funcionário"
+    mail to: @company_identifier.email, subject: "Cadastro de novo funcionário"
   end
 end

@@ -15,10 +15,9 @@ class RegistrationsController < ApplicationController
     @user.company = @company
 
     if @user.save
-      owner_user = @user.company.owner
-      UserMailer.with(user: owner_user).new_user.deliver_later
+      UserMailer.with(user: @user).new_user.deliver_later
 
-      redirect_to sign_in_path(params: { company: { identifier: @company.identifier } }), notice: "Você precisa da aprovação do administrador da empresa para confirmar o emial"
+      redirect_to sign_in_path(params: { company: { identifier: @company.identifier } }), notice: "Você precisa da aprovação do administrador da empresa para confirmar o email."
     else
       render :new, status: :unprocessable_entity
     end
