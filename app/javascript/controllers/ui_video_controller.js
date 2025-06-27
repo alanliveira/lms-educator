@@ -13,13 +13,13 @@ export default class extends Controller {
         controls: true,
         disablePictureInPicture = true,
         autoplay: false,
+        disablePictureInPicture: true,
         preload: 'auto',
         fluid: true
       })
 
       video.on('ended', function () {
         // alert("O vídeo terminou.");
-
 
         const learnActive = document.querySelector('.course-class-active')
         const [element, courseStep] = learnActive.id.split('course_class_')
