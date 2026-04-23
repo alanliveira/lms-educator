@@ -7,15 +7,16 @@ export default class extends Controller {
     while (true) {
       const videoTarget = document.querySelector('#my-player')
       if (!videoTarget) continue
+
       videoTarget.classList.add('video-js')
 
-      const video = window.videojs(videoTarget, {
-        controls: true,
-        disablePictureInPicture = true,
-        autoplay: false,
-        preload: 'auto',
-        fluid: true
-      })
+      // const video = window.videojs(videoTarget, {
+      //   controls: true,
+      //   disablePictureInPicture = true,
+      //   autoplay: false,
+      //   preload: 'auto',
+      //   fluid: true
+      // })
 
       video.on('ended', function () {
         // alert("O vídeo terminou.");
