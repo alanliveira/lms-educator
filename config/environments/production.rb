@@ -31,7 +31,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :microsoft
+  config.active_storage.service = :supabase
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -93,4 +93,5 @@ Rails.application.configure do
 
   config.hosts << "aprenda.seetech.com.br"
   config.hosts << "portal-educacional.onrender.com"
+  config.hosts << "educator.com.br"
 end

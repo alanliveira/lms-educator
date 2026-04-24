@@ -16,8 +16,11 @@
     </div>
     <%# Corpo %>
     <div class="col-span-1">
-      <%# Corpo %>
-      <%= render 'table', users: @users %>
+    <%# Corpo %>
+    <%= render 'table', users: @users %>
+    </div>
+    <div class="col-span-1 justify-content-end">
+      <%= paginate @users %>
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Portal eduacional <%= " - #{Current.user.company.identifier}" if Current&.user&.company&.identifier %></title>
+    <title>Portal Educacional - <%= " - #{Current.user.company.identifier}" if Current&.user&.company&.identifier %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -16,5 +16,10 @@
       <%# render 'layouts/sidebar' %>
       <%= yield %>
     </main>
+    <footer>
+      <div class="text-center text-gray-500 text-sm py-4">
+        &copy; <%= Time.current.year %> Seetech&reg;. Todos os direitos reservados.
+      </div>
+    </footer>
   </body>
 </html>
