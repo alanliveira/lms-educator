@@ -7,9 +7,9 @@
       <% course.course_classes.each do |cc| %>
         <li class="py-3 sm:py-4">
           <%= link_to course_course_class_path(course, cc),
-                             id: dom_id(cc),
-                             class: "#{'course-class-active' if course_class.id == cc.id}",
-                              data: { turbo: false } do %>
+                      id: dom_id(cc),
+                      class: "#{'course-class-active' if course_class.id == cc.id}",
+                      data: { turbo: false } do %>
             <div class="flex items-center">
               <div class="flex-shrink-0">
                 <%= image_tag cc.thumbnail,
