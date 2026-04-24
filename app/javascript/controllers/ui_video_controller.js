@@ -7,6 +7,7 @@ export default class extends Controller {
     while (true) {
       const videoTarget = document.querySelector('#my-player')
       if (!videoTarget) continue
+
       videoTarget.classList.add('video-js')
 
       const video = window.videojs(videoTarget, {
