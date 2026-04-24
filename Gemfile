@@ -67,7 +67,7 @@ gem 'kaminari'
 gem 'ransack'
 
 # Microsoft Azure Storage Library for Ruby
-gem 'azure-storage-blob', require: false
+# gem 'azure-storage-blob', require: false
 
 # A set of common locale data and translations to internationalize and/or localize your Rails applications.
 gem 'rails-i18n'
@@ -111,3 +111,5 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem 'spring'
 end
+
+gem 'aws-sdk-s3', require: false
