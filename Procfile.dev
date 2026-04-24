@@ -1,4 +1,4 @@
-web: bundle exec rdbg --open -n -c -- bin/rails s
+web: bundle exec rdbg --open -n -c -- bin/rails s -b 0.0.0.0
 js: yarn build --watch
 css: yarn build:css --watch
 mail: maildev
