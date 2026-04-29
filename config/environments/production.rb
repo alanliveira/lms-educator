@@ -93,5 +93,5 @@ Rails.application.configure do
 
   config.hosts << "aprenda.seetech.com.br"
   config.hosts << "portal-educacional.onrender.com"
-  config.hosts << "educator.com.br"
+  config.hosts << "educator.app.br/"
 end
