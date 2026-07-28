@@ -21,3 +21,6 @@ application.register("ui-toast-notification", UiToastNotificationController)
 
 import UiVideoController from "./ui_video_controller"
 application.register("ui-video", UiVideoController)
+
+import CertificateEditorController from "./certificate_editor_controller"
+application.register("certificate-editor", CertificateEditorController)

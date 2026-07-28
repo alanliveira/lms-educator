@@ -18,5 +18,8 @@
       <%# Corpo %>
       <%= render 'table', companies: @companies %>
     </div>
+    <div class="col-span-1 flex justify-end">
+      <%= paginate @companies %>
+    </div>
   </div>
 </div>

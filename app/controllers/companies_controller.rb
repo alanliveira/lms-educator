@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, only: %i[show edit update destroy add_course remove_course]
+  before_action :set_company, only: %i[show edit update destroy add_course remove_course toggle_access]
 
   # GET /companies
   def index
@@ -30,7 +30,7 @@ class CompaniesController < ApplicationController
 
       redirect_to @company, notice: "Empresa criada com sucesso."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -39,7 +39,7 @@ class CompaniesController < ApplicationController
     if @company.update(company_params)
       redirect_to @company, notice: "Empresa atualizada com sucesso.", status: :see_other
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -53,28 +53,27 @@ class CompaniesController < ApplicationController
     if @company.update(company_params)
       redirect_to company_path(@company), notice: 'Curso adicionado para a empresa com sucesso'
     else
-      render :new_add_course, alert: 'Erro ao adicionar o curso para a empresa'
+      render :show, status: :unprocessable_content, alert: 'Erro ao adicionar o curso para a empresa'
     end
   end
 
   def remove_course
-    @company = Company.find(params[:id])
     @company_course = @company.company_courses.find_by(course_id: params[:course_id])
 
-    if @company_course.destroy
+    if @company_course&.destroy
       redirect_to company_path(@company), notice: "Curso removido da empresa com sucesso"
     else
-      render :show, status: :unprocessable_entity, alert: 'Curso não encontrado ou já foi removido.'
+      render :show, status: :unprocessable_content, alert: 'Curso não encontrado ou já foi removido.'
     end
   end
 
   def toggle_access
-    company_course = CompanyCourse.find_by(company_id: params[:id], course_id: params[:course_id])
+    company_course = @company.company_courses.find_by(course_id: params[:course_id])
     if company_course
       company_course.toggle!(:can_be_viewed)
       redirect_to course_path(company_course.course), notice: 'O acesso ao curso foi atualizado com sucesso.'
     else
-      redirect_to course_path(company_course.course), alert: 'Associação entre empresa e curso não encontrada.'
+      redirect_to company_path(@company), alert: 'Associação entre empresa e curso não encontrada.'
     end
   end
 
@@ -82,7 +81,7 @@ class CompaniesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_company
-    @company = Company.find(params[:id])
+    @company = policy_scope(Company).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
@@ -92,7 +91,7 @@ class CompaniesController < ApplicationController
                                     :cnpj,
                                     :logo,
                                     :address,
-                                    :identifier,
+                                    :subdomain,
                                     users_attributes: [:full_name,
                                                        :department,
                                                        :email,

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Educator LMS"
+  short_description: "Work on this Rails LMS upgrade, authentication, and tenancy."
+  default_prompt: "Use the Educator LMS skill to analyze or change this Rails project."

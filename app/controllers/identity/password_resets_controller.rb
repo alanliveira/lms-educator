@@ -1,5 +1,5 @@
 class Identity::PasswordResetsController < ApplicationController
-  skip_before_action :authenticate
+  allow_unauthenticated_access
   before_action :set_user, only: %i[edit update]
 
   layout 'authentication'
@@ -24,7 +24,7 @@ class Identity::PasswordResetsController < ApplicationController
     if @user.update(user_params)
       redirect_to sign_in_path, notice: "Sua senha foi alterada com sucesso. Faça o login"
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

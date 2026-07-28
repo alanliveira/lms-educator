@@ -10,23 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
-  create_schema "auth"
-  create_schema "extensions"
-  create_schema "graphql"
-  create_schema "graphql_public"
-  create_schema "pgbouncer"
-  create_schema "realtime"
-  create_schema "storage"
-  create_schema "vault"
-
+ActiveRecord::Schema[8.0].define(version: 2026_07_27_060000) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_graphql"
-  enable_extension "pg_stat_statements"
-  enable_extension "pgcrypto"
-  enable_extension "plpgsql"
-  enable_extension "supabase_vault"
-  enable_extension "uuid-ossp"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -66,6 +52,31 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "certificate_issuances", force: :cascade do |t|
+    t.bigint "certificate_id", null: false
+    t.bigint "course_id", null: false
+    t.bigint "user_id", null: false
+    t.string "verification_code", null: false
+    t.datetime "completed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certificate_id", "user_id"], name: "index_certificate_issuances_on_certificate_id_and_user_id", unique: true
+    t.index ["certificate_id"], name: "index_certificate_issuances_on_certificate_id"
+    t.index ["course_id"], name: "index_certificate_issuances_on_course_id"
+    t.index ["user_id"], name: "index_certificate_issuances_on_user_id"
+    t.index ["verification_code"], name: "index_certificate_issuances_on_verification_code", unique: true
+  end
+
+  create_table "certificates", force: :cascade do |t|
+    t.bigint "course_id", null: false
+    t.text "description"
+    t.integer "total_hours"
+    t.jsonb "elements", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_certificates_on_course_id", unique: true
+  end
+
   create_table "companies", force: :cascade do |t|
     t.string "name"
     t.string "fantasy_name"
@@ -73,9 +84,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "identifier"
+    t.string "subdomain"
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_companies_on_deleted_at"
+    t.index ["subdomain"], name: "index_companies_on_subdomain", unique: true, where: "((subdomain IS NOT NULL) AND (deleted_at IS NULL))"
   end
 
   create_table "company_courses", force: :cascade do |t|
@@ -84,6 +96,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
     t.boolean "can_be_viewed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["company_id", "course_id"], name: "index_company_courses_on_company_id_and_course_id", unique: true
     t.index ["company_id"], name: "index_company_courses_on_company_id"
     t.index ["course_id"], name: "index_company_courses_on_course_id"
   end
@@ -95,9 +108,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.index ["company_id", "user_id"], name: "index_company_users_on_company_id_and_user_id", unique: true, where: "(deleted_at IS NULL)"
     t.index ["company_id"], name: "index_company_users_on_company_id"
+    t.index ["company_id"], name: "index_company_users_on_unique_active_owner", unique: true, where: "((owner = true) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_company_users_on_deleted_at"
     t.index ["user_id"], name: "index_company_users_on_user_id"
+  end
+
+  create_table "course_class_completions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "course_class_id", null: false
+    t.datetime "completed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_class_id"], name: "index_course_class_completions_on_course_class_id"
+    t.index ["user_id", "course_class_id"], name: "index_course_class_completions_on_user_and_class", unique: true
+    t.index ["user_id"], name: "index_course_class_completions_on_user_id"
   end
 
   create_table "course_classes", force: :cascade do |t|
@@ -117,6 +143,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
     t.datetime "updated_at", null: false
     t.text "description"
     t.datetime "deleted_at"
+    t.integer "workload_hours"
     t.index ["deleted_at"], name: "index_courses_on_deleted_at"
   end
 
@@ -140,15 +167,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
 
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "user_agent"
     t.string "ip_address"
+    t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email", null: false
+    t.string "email_address", null: false
     t.string "password_digest", null: false
     t.boolean "verified", default: false, null: false
     t.datetime "created_at", null: false
@@ -158,7 +185,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
     t.string "full_name", null: false
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
-    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|
@@ -171,10 +198,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_11_013816) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "certificate_issuances", "certificates"
+  add_foreign_key "certificate_issuances", "courses"
+  add_foreign_key "certificate_issuances", "users"
+  add_foreign_key "certificates", "courses"
   add_foreign_key "company_courses", "companies"
   add_foreign_key "company_courses", "courses"
   add_foreign_key "company_users", "companies"
   add_foreign_key "company_users", "users"
+  add_foreign_key "course_class_completions", "course_classes"
+  add_foreign_key "course_class_completions", "users"
   add_foreign_key "course_classes", "courses"
   add_foreign_key "histories", "users"
   add_foreign_key "sessions", "users"

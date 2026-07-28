@@ -3,38 +3,35 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="ui-video"
 export default class extends Controller {
   connect() {
-    // var video = document.getElementById('my-player_html5_api');
-    while (true) {
-      const videoTarget = document.querySelector('#my-player')
-      if (!videoTarget) continue
+    const videoTarget = this.element.matches("video") ? this.element : document.querySelector('#my-player')
+    if (!videoTarget || !window.videojs) return
 
-      videoTarget.classList.add('video-js')
-
-      const video = window.videojs(videoTarget, {
+    videoTarget.classList.add('video-js')
+    const video = videoTarget.player || window.videojs(videoTarget, {
         controls: true,
         disablePictureInPicture: true,
         autoplay: false,
         disablePictureInPicture: true,
         preload: 'auto',
         fluid: true
-      })
+    })
 
-      video.on('ended', function () {
-        // alert("O vídeo terminou.");
+    video.on('ended', () => {
+      const completeUrl = videoTarget.dataset.completeUrl
+      if (completeUrl) {
+        fetch(completeUrl, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+          }
+        }).then(response => response.json()).then(data => {
+          if (data.certificate_ready) document.querySelector('[data-certificate-download]')?.classList.remove('hidden')
+        })
+      }
 
-        const learnActive = document.querySelector('.course-class-active')
-        const [element, courseStep] = learnActive.id.split('course_class_')
-        const nextStepCourseClass = parseInt(courseStep) + 1
-        const nextCourseClass = document.querySelector(`#course_class_${nextStepCourseClass}`)
-
-        if (!!nextCourseClass) {
-          nextCourseClass.click()
-        } // else {
-        //   alert('Acabou o curso')
-        // }
-      });
-
-      break;
-    }
+      const nextCourseClass = document.querySelector('.course-class-active + li a')
+      if (nextCourseClass) nextCourseClass.click()
+    })
   }
 }

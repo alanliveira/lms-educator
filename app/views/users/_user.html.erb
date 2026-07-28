@@ -27,10 +27,10 @@
       <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
         <div class="text-base font-semibold text-gray-900 dark:text-white">
           <%= 'Colaborador' if user.has_role?(:student) %>
-          <%= 'Empresa' if user.has_role?(:company) %><%= ' - Proprietário' if user.company_user.owner? %>
+          <%= 'Empresa' if user.has_role?(:company) %><%= ' - Proprietário' if user.company_user&.owner? %>
         </div>
         <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-          <%= user.company.name %>
+          <%= user.company&.name %>
         </div>
       </div>
     <% end %>

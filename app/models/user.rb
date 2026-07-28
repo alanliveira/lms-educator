@@ -3,9 +3,10 @@ class User < ApplicationRecord
   rolify
 
   has_secure_password
+  alias_attribute :email, :email_address
 
   generates_token_for :email_verification, expires_in: 1.day do
-    email
+    email_address
   end
 
   generates_token_for :password_reset, expires_in: 20.minutes do
@@ -16,9 +17,11 @@ class User < ApplicationRecord
   has_one :company, through: :company_user
 
   has_many :histories, dependent: :destroy
+  has_many :course_class_completions, dependent: :destroy
+  has_many :certificate_issuances, dependent: :destroy
   has_many :sessions, dependent: :destroy
 
-  validates :email,
+  validates :email_address,
             presence: true,
             uniqueness: true,
             format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -28,12 +31,12 @@ class User < ApplicationRecord
             format: { with: /(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#{::Regexp.last_match(0)}*]|.*[A-Z])/,
                       message: "Deve conter letras, números e pelo menos um caractere especial ou uma letra maiúscula" }
 
-  normalizes :email, with: -> { _1.strip.downcase }
+  normalizes :email_address, with: -> { _1.strip.downcase }
 
   accepts_nested_attributes_for :company_user
   accepts_nested_attributes_for :company
 
-  before_validation if: :email_changed?, on: :update do
+  before_validation if: :email_address_changed?, on: :update do
     self.verified = false
   end
 
@@ -57,7 +60,7 @@ class User < ApplicationRecord
   end
 
   after_update if: :password_digest_previously_changed? do
-    sessions.where.not(id: Current.session).delete_all
+    sessions.where.not(id: Current.session&.id).delete_all
   end
 
   delegate :owner?, to: :company_user

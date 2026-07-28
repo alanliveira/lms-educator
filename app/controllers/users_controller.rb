@@ -5,7 +5,7 @@ class UsersController < ApplicationController
     @users = if Current.user.has_role?(:admin)
                User.order(id: :desc).page(params[:page]).per(params[:per])
              else
-               Current.user.company.users.order(id: :desc) # .page(params[:page]).per(params[:per])
+               policy_scope(User).order(id: :desc).page(params[:page]).per(params[:per])
              end
   end
 
@@ -20,7 +20,8 @@ class UsersController < ApplicationController
         format.html { redirect_back(fallback_location: root_path) }
       end
     else
-      render :index, status: :unprocessable_entity
+      @users = policy_scope(User).order(id: :desc).page(params[:page]).per(params[:per])
+      render :index, status: :unprocessable_content
     end
   end
 
@@ -36,7 +37,7 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to @user, notice: "Usuário criado com sucesso"
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -46,7 +47,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       redirect_to @user, notice: "Usuário alterado com sucesso"
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -58,15 +59,18 @@ class UsersController < ApplicationController
   private
 
   def find_user
-    @user = User.includes(:company_user).where(id: params[:id]).first
+    @user = policy_scope(User).includes(:company_user).find(params[:id])
   end
 
   def user_params
-    params.require(:user).permit(:email,
-                                 :password,
-                                 :department,
-                                 :full_name,
-                                 :active,
-                                 company_user_attributes: [:company_id])
+    permitted_params = [:email, :password, :department, :full_name]
+    permitted_params << :active if Current.user.has_role?(:admin)
+
+    if Current.user.has_role?(:admin)
+      params.require(:user).permit(*permitted_params, company_user_attributes: [:company_id])
+    else
+      params.require(:user).permit(*permitted_params)
+    end
   end
+
 end

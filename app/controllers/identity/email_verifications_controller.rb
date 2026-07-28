@@ -1,12 +1,12 @@
 class Identity::EmailVerificationsController < ApplicationController
-  skip_before_action :authenticate, only: :show
+  allow_unauthenticated_access only: :show
   before_action :set_user, only: :show
 
   layout 'authentication'
 
   def show
     @user.update! verified: true
-    redirect_to root_path(params: { company: { identifier: params.dig('company', 'identifier') } }),
+    redirect_to root_path,
                 notice: "Obrigado pela confirmação do seu endereço de email"
   end
 

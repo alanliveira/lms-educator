@@ -3,10 +3,10 @@
 </h2>
 <%= form_with model: Company.new, url: sign_in_path, class: 'mt-8 space-y-6', method: :get do |form| %>
   <div>
-    <%= form.label :identifier,
+    <%= form.label :subdomain,
                    value: 'Identificador',
                    class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-white' %>
-    <%= form.text_field :identifier,
+    <%= form.text_field :subdomain,
                         required: true,
                         autofocus: true,
                         placeholder: 'ex: see-tech',

@@ -4,6 +4,7 @@ class CompanyUser < ApplicationRecord
   belongs_to :company
   belongs_to :user
 
+  validates :user_id, uniqueness: { scope: :company_id }
   validates :owner, uniqueness: { scope: :company_id }, if: -> { owner }
 
   before_destroy :soft_delete_user

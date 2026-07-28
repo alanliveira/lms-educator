@@ -7,7 +7,7 @@ class HistoriesController < ApplicationController
     if @history.save
       head :ok
     else
-      head :unprocessable_entity
+      head :unprocessable_content
     end
   end
 end

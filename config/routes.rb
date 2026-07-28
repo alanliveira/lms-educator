@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  if defined?(Rswag::Api)
+    mount Rswag::Api::Engine => '/api-docs'
+  end
+
+  if defined?(Rswag::Ui)
+    mount Rswag::Ui::Engine => '/api-docs'
+  end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -7,6 +15,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ('/')
   root 'courses#index'
+
+  resource :setup, only: %i[new create], controller: :setup
+  get "wrong_domain", to: "wrong_domains#show"
+  post "wrong_domain/contact", to: "wrong_domains#create", as: :wrong_domain_contact
+  get "certificates/:verification_code", to: "certificate_validations#show", as: :certificate_validation
 
   resources :companies do
     member do
@@ -17,7 +30,11 @@ Rails.application.routes.draw do
   end
 
   resources :courses do
+    resource :certificate, only: %i[edit update], controller: :certificates do
+      get :download
+    end
     resources :course_classes, except: [:index]
+    post "course_classes/:course_class_id/complete", to: "course_classes#complete", as: :complete_course_class
   end
 
   resources :dashboard, only: [:index]

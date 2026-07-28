@@ -1,32 +1,36 @@
 class RegistrationsController < ApplicationController
-  skip_before_action :authenticate
+  allow_unauthenticated_access
   before_action :find_company, only: [:new]
 
   layout 'authentication'
 
   def new
+    return redirect_to sign_in_path, alert: "Acesse pelo subdomínio da empresa para criar uma conta." unless @company
+
     @user = User.new
     @user.build_company(id: @company.id)
   end
 
   def create
+    return redirect_to sign_in_path, alert: "Acesse pelo subdomínio da empresa para criar uma conta." unless Current.company
+
     @user = User.new(user_params)
-    @company = Company.find_by(id: params.dig(:user, :company_attributes, :id))
+    @company = Current.company
     @user.company = @company
 
     if @user.save
       UserMailer.with(user: @user).new_user.deliver_later
 
-      redirect_to sign_in_path(params: { company: { identifier: @company.identifier } }), notice: "Você precisa da aprovação do administrador da empresa para confirmar o email."
+      redirect_to sign_in_path, notice: "Você precisa da aprovação do administrador da empresa para confirmar o email."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
   private
 
   def find_company
-    @company = Company.find_by(identifier: params.dig(:company, :identifier))
+    @company = Current.company
   end
 
   def user_params

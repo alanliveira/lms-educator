@@ -13,16 +13,23 @@ class UserMailer < ApplicationMailer
   def email_verification
     @user = params[:user]
     @signed_id = @user.generate_token_for(:email_verification)
-    @company_identifier = @user&.company&.identifier || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).identifier
+    @company_subdomain = @user&.company&.subdomain || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).subdomain
+    @company_host = company_host(@company_subdomain)
     
     mail to: @user.email, subject: "Valide o seu email"
   end
   
   def new_user
     @user = params[:user]
-    @company_identifier = @user&.company&.identifier || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).identifier
+    @company_subdomain = @user&.company&.subdomain || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).subdomain
     @owner_user = @user&.company&.owner || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).owner
 
     mail to: @owner_user.email, subject: "Cadastro de novo funcionário"
+  end
+
+  private
+
+  def company_host(subdomain)
+    [subdomain, ENV.fetch("EMAIL_HOST")].compact_blank.join(".")
   end
 end

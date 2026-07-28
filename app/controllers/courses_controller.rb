@@ -3,18 +3,13 @@ class CoursesController < ApplicationController
 
   # GET /courses
   def index
-    @courses = if Current.user.has_role?(:admin)
-                 Course.all
-               elsif Current.user.has_role?(:company)
-                 Current.user.company.courses
-               else
-                 Course.where(id: CompanyCourse.where(company_id: Current.user.company.id, can_be_viewed: true)
-                                               .pluck(:course_id))
-               end
+    @courses = policy_scope(Course).order(id: :desc).page(params[:page]).per(params[:per])
   end
 
   # GET /courses/1
-  def show; end
+  def show
+    @course_classes = @course.course_classes.page(params[:page]).per(params[:per])
+  end
 
   # GET /courses/new
   def new
@@ -31,7 +26,7 @@ class CoursesController < ApplicationController
     if @course.save
       redirect_to @course, notice: "Course was successfully created."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -40,7 +35,7 @@ class CoursesController < ApplicationController
     if @course.update(course_params)
       redirect_to @course, notice: "Course was successfully updated.", status: :see_other
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -54,15 +49,11 @@ class CoursesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_course
-    @course = if Current.user.has_role?(:admin)
-                Course.find(params[:id])
-              else
-                Current.user.company.courses.find(params[:id])
-              end
+    @course = policy_scope(Course).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
   def course_params
-    params.require(:course).permit(:name, :description, :thumbnail)
+    params.require(:course).permit(:name, :description, :workload_hours, :thumbnail)
   end
 end

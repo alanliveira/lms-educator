@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
-ruby '3.3.0'
+ruby '4.0.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 7.1.3', '>= 7.1.3.4'
+gem 'rails', '~> 8.0.0'
 
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem 'propshaft'
@@ -47,8 +47,9 @@ gem 'bootsnap', require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem 'image_processing', '~> 1.2'
 
-# An authentication system generator for Rails applications.
-gem 'authentication-zero'
+# PDF certificate rendering.
+gem 'prawn'
+gem 'rqrcode'
 
 # Resend's Ruby SDK
 gem 'resend'
@@ -79,6 +80,18 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[ mri windows ]
 
+  # A Ruby gem to load environment variables from `.env`.
+  gem 'dotenv-rails'
+
+  # Test suite and API documentation.
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'rspec-rails'
+  gem 'rswag-api'
+  gem 'rswag-specs'
+  gem 'rswag-ui'
+  gem 'ostruct'
+
   # A Ruby static code analyzer and formatter, based on the community Ruby style guide.
   gem 'rubocop'
 
@@ -92,12 +105,20 @@ group :development, :test do
   gem 'rubocop-rake'
 end
 
+group :test do
+  # Browser-level integration testing.
+  gem 'capybara'
+
+  # Model matcher helpers for RSpec.
+  gem 'shoulda-matchers'
+
+  # Test coverage reporting.
+  gem 'simplecov', require: false
+end
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
-
-  # A Ruby gem to load environment variables from `.env`.
-  gem 'dotenv-rails'
 
   # An opinionated language server for Ruby
   gem 'ruby-lsp'

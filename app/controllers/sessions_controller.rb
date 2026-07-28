@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  skip_before_action :authenticate, only: %i[new create]
+  allow_unauthenticated_access only: %i[new create]
   before_action :set_session, only: :destroy
   before_action :find_company, only: [:new]
 
@@ -12,28 +12,27 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
-    if user = User.authenticate_by(user_params.merge!({ active: true }))
-      @session = user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true, max_age: Time.zone.now.end_of_day }
-
+    if user = authenticatable_user
+      @session = start_new_session_for(user)
       History.create(user:, action: "Entrou na plataforma")
 
-      redirect_to set_redirect_to(user), notice: "Login feito com sucesso"
+      redirect_to after_authentication_url, notice: "Login feito com sucesso"
     else
-      redirect_to sign_in_path(email_hint: params[:email], company: { identifier: params.dig(:company, :identifier) }), alert: "O email e a senha estão incorretos"
+      redirect_to sign_in_path(email_hint: user_params[:email]), alert: "O email e a senha estão incorretos"
     end
   end
 
   def destroy
     History.create(user: Current.user, action: "Saiu da plataforma")
-    @session.destroy
+    @session.destroy unless @session == Current.session
+    terminate_session if @session == Current.session
     redirect_to(sessions_path, notice: "That session has been logged out")
   end
 
   private
 
   def find_company
-    @company = Company.find_by(identifier: params.dig(:company, :identifier))
+    @company = Current.company
   end
 
   def set_session
@@ -42,5 +41,18 @@ class SessionsController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password)
+  end
+
+  def authentication_params
+    user_params.to_h.symbolize_keys.then do |credentials|
+      credentials[:email_address] = credentials.delete(:email)
+      credentials
+    end
+  end
+
+  def authenticatable_user
+    User.authenticate_by(authentication_params.merge(active: true)).tap do |user|
+      return nil if user && Current.company && user.company != Current.company
+    end
   end
 end

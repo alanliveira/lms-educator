@@ -1,0 +1,147 @@
+<div class="flex w-full flex-col px-4 pt-6 2xl:px-0 xl:h-[calc(100vh-5rem)] xl:overflow-hidden" data-controller="certificate-editor">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <%= link_to "Voltar para o curso", course_path(@course), class: "text-sm text-primary-700 hover:underline dark:text-primary-400" %>
+      <h1 class="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">Editar certificado</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400"><%= @course.name %></p>
+    </div>
+    <button type="submit" form="certificate-form" class="rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800">Salvar certificado</button>
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[16rem_minmax(0,1fr)_20rem] xl:min-h-0 xl:flex-1 xl:overflow-hidden">
+    <aside class="min-h-0 overflow-y-auto rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+      <div>
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Biblioteca</h2>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Restaure elementos removidos do certificado.</p>
+        <div data-certificate-editor-target="library" class="mt-3 flex flex-wrap gap-2"></div>
+      </div>
+    </aside>
+    <section class="min-h-0 min-w-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 p-4 dark:border-gray-700 dark:bg-gray-800">
+      <div class="mx-auto w-full max-w-5xl">
+        <div data-certificate-editor-target="canvas"
+             data-seal-url="<%= rails_blob_path(@certificate.verification_seal) if @certificate.verification_seal.attached? %>"
+             class="relative aspect-[1.414/1] w-full overflow-hidden rounded border border-gray-300 bg-white shadow-lg dark:border-gray-600">
+          <div data-certificate-editor-target="backgroundLayer"
+               class="pointer-events-none absolute inset-0 bg-cover bg-center"
+               style="<%= "background-image: url(#{url_for(@certificate.artwork)})" if @certificate.artwork.attached? %>"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="min-h-0 space-y-5 overflow-y-auto rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Elementos</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Arraste os elementos sobre a arte do certificado.</p>
+      </div>
+      <div>
+        <%= form_with model: [@course, @certificate], url: course_certificate_path(@course), method: :patch, multipart: true, id: "certificate-form", class: "space-y-4" do |form| %>
+          <div data-certificate-editor-target="selectedPanel" class="hidden border-t border-gray-200 pt-4 dark:border-gray-700">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Propriedades: <span data-certificate-editor-target="selectedType"></span></h3>
+              <button type="button" data-certificate-editor-target="deleteElementButton" data-action="certificate-editor#deleteSelectedElement" class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20">Excluir elemento</button>
+            </div>
+            <div data-certificate-editor-target="textControls" class="mt-3 grid grid-cols-2 gap-3">
+              <div class="col-span-2">
+                <%= form.label :font_family, "Fonte", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <select data-certificate-editor-target="selectedFontFamily" data-property="font_family" data-action="change->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                  <option>Arial</option>
+                  <option>Georgia</option>
+                  <option>Verdana</option>
+                  <option>Trebuchet MS</option>
+                </select>
+              </div>
+              <div>
+                <%= form.label :font_size, "Tamanho", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <input type="number" min="8" max="96" data-certificate-editor-target="selectedFontSize" data-property="font_size" data-action="input->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <%= form.label :color, "Cor", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <input type="color" data-certificate-editor-target="selectedColor" data-property="color" data-action="input->certificate-editor#updateProperty" class="mt-1 block h-9 w-full rounded-lg border-gray-300 p-1 dark:border-gray-600 dark:bg-gray-700">
+              </div>
+              <div>
+                <%= form.label :text_align, "Alinhamento horizontal", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <select data-certificate-editor-target="selectedTextAlign" data-property="text_align" data-action="change->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                  <option value="left">Esquerda</option>
+                  <option value="center">Centro</option>
+                  <option value="right">Direita</option>
+                  <option value="justify">Justificado</option>
+                </select>
+              </div>
+              <div>
+                <%= form.label :vertical_align, "Alinhamento vertical", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <select data-certificate-editor-target="selectedVerticalAlign" data-property="vertical_align" data-action="change->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                  <option value="top">Topo</option>
+                  <option value="center">Centro</option>
+                  <option value="bottom">Base</option>
+                </select>
+              </div>
+            </div>
+            <div data-certificate-editor-target="elementControls" class="hidden mt-3 grid grid-cols-2 gap-3">
+              <div>
+                <%= form.label :width, "Largura (%)", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <input type="number" min="2" max="100" step="0.5" data-certificate-editor-target="selectedWidth" data-property="width" data-action="input->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <%= form.label :height, "Altura (%)", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <input type="number" min="2" max="100" step="0.5" data-certificate-editor-target="selectedHeight" data-property="height" data-action="input->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <%= form.label :x, "Posição X (%)", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <input type="number" min="0" max="100" step="0.5" data-certificate-editor-target="selectedX" data-property="x" data-action="input->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <%= form.label :y, "Posição Y (%)", class: "block text-xs font-medium text-gray-700 dark:text-gray-300" %>
+                <input type="number" min="0" max="100" step="0.5" data-certificate-editor-target="selectedY" data-property="y" data-action="input->certificate-editor#updateProperty" class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+              </div>
+            </div>
+          </div>
+          <div data-certificate-editor-target="artworkControls" class="space-y-4">
+            <div>
+              <%= form.label :artwork, "Arte do certificado", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
+              <%= form.file_field :artwork, accept: "image/*", data: { certificate_editor_target: "background" }, class: "mt-1 block w-full text-sm text-gray-500" %>
+            </div>
+            <div>
+              <%= form.label :background_opacity, "Transparência da arte", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
+              <input type="range" min="0" max="1" step="0.01" value="<%= @certificate.elements.fetch("background_opacity", 1) %>" data-certificate-editor-target="backgroundOpacity" class="mt-2 w-full accent-primary-700">
+            </div>
+          </div>
+          <div data-certificate-editor-target="sealControls" class="hidden">
+            <%= form.label :verification_seal, "Selo de verificação", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
+            <%= form.file_field :verification_seal, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500" %>
+          </div>
+          <div data-certificate-editor-target="descriptionControls" class="hidden space-y-4">
+            <div>
+              <%= form.label :description, "Descritivo do certificado", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
+              <%= form.text_area :description, rows: 6, data: { certificate_editor_target: "descriptionInput", action: "input->certificate-editor#updateDescription" }, class: "mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white" %>
+            </div>
+            <div>
+              <%= form.label :total_hours, "Total de horas", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
+              <%= form.number_field :total_hours, min: 0, class: "mt-1 block w-full rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white" %>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Campos do descritivo</h3>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Clique para inserir o campo no ponto atual do texto.</p>
+              <div class="mt-3 grid gap-2">
+                <% {
+                  "nome_do_aluno" => "Nome do aluno",
+                  "data_conclucao" => "Data de conclusão",
+                  "titulo_curso" => "Título do curso",
+                  "carga_horaria" => "Carga horária",
+                  "nome_da_empresa" => "Nome da empresa"
+                }.each do |key, label| %>
+                  <button type="button" data-field-key="<%= key %>" data-action="certificate-editor#insertDescriptionField" class="rounded-lg border border-gray-300 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"><%= label %></button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div data-certificate-editor-target="signatureControls" class="hidden">
+            <div data-certificate-editor-target="signatureList" class="space-y-3"></div>
+            <button type="button" data-action="certificate-editor#addSignature" class="mt-3 w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Adicionar assinatura</button>
+          </div>
+          <%= form.hidden_field :elements_json, value: @certificate.elements.to_json, data: { certificate_editor_target: "elements" } %>
+          <%= form.submit "Salvar certificado", class: "w-full rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800" %>
+        <% end %>
+      </div>
+    </aside>
+  </div>
+</div>

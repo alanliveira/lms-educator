@@ -1,9 +1,4 @@
 <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto md:h-screen pt:mt-0 dark:bg-gray-900">
-  <%= link_to sign_in_path(params: { company: { identifier: request.params.dig(:company, :identifier) }}),
-              class: 'flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white' do%>
-    <%# <img src="/images/logo.svg" class="mr-4 h-11" alt="FlowBite Logo"> %>
-    <span>Aprenda Web</span>
-  <% end %>
   <!-- Card -->
   <div class="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800 overflow-x-auto">
     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -20,7 +15,7 @@
           </ul>
         </div>
       <% end %>
-      <%# Identificado da empresa %>
+      <%# Empresa definida pelo subdomínio %>
       <%= form.fields_for :company do |company_user_form| %>
         <%= company_user_form.hidden_field :id %>
       <% end %>
