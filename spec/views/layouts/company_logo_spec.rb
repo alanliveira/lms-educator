@@ -11,7 +11,7 @@ RSpec.describe "layouts/_company_logo", type: :view do
     admin_company.save!(validate: false)
     Current.reset
 
-    render partial: "layouts/company_logo"
+    render partial: "layouts/company_logo", locals: { company: admin_company }
 
     expect(rendered).to include("alt=\"#{admin_company.fantasy_name}\"")
   end
