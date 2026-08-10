@@ -15,11 +15,11 @@ local:
 #   bucket: your_own_bucket-<%= Rails.env %>
 supabase:
   service: S3
-  endpoint: <%= ENV['SUPABASE_STORAGE_ENDPOINT'] %>
+  endpoint: <%= ENV.fetch('SUPABASE_STORAGE_ENDPOINT', '').inspect %>
   region: sa-east-1
   bucket: contents-class
-  access_key_id: <%= ENV['SUPABASE_KEY'] %>
-  secret_access_key: <%= ENV['SUPABASE_KEY_SECRET'] %>
+  access_key_id: <%= ENV.fetch('SUPABASE_KEY', '').inspect %>
+  secret_access_key: <%= ENV.fetch('SUPABASE_KEY_SECRET', '').inspect %>
   force_path_style: true
 
 # Remember not to checkin your GCS keyfile to a repository
