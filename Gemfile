@@ -134,3 +134,11 @@ group :development do
 end
 
 gem "aws-sdk-s3", "~> 1.220", require: false
+
+gem "bullet", "~> 8.1", group: :development
+
+gem "active_storage_validations", "~> 4.0"
+
+gem "rubycritic", "~> 5.0", group: :development
+
+gem "parser", ">= 3.3.7.2", group: :development

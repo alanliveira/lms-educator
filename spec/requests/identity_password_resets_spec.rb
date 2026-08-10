@@ -9,6 +9,20 @@ RSpec.describe "Identity password resets", type: :request do
 
       expect(response).to have_http_status(:ok)
     end
+
+    it "shows the company logo for the subdomain" do
+      company = create(:company, subdomain: "password-logo")
+      company.logo.attach(
+        io: StringIO.new(File.binread(Rails.root.join("spec/fixtures/files/logo.png"))),
+        filename: "logo.png",
+        content_type: "image/png"
+      )
+      host! "#{company.subdomain}.lvh.me"
+
+      get new_identity_password_reset_path
+
+      expect(response.body).to include("alt=\"#{company.fantasy_name}\"")
+    end
   end
 
   describe "POST /identity/password_reset" do
@@ -37,6 +51,21 @@ RSpec.describe "Identity password resets", type: :request do
       get edit_identity_password_reset_path, params: { sid: sid }
 
       expect(response).to have_http_status(:ok)
+    end
+
+    it "shows the company logo when resetting a password from its subdomain" do
+      company = create(:company, subdomain: "password-reset-logo")
+      company.logo.attach(
+        io: StringIO.new(File.binread(Rails.root.join("spec/fixtures/files/logo.png"))),
+        filename: "logo.png",
+        content_type: "image/png"
+      )
+      user = create(:user, company: company, verified: true)
+      host! "#{company.subdomain}.lvh.me"
+
+      get edit_identity_password_reset_path, params: { sid: user.generate_token_for(:password_reset) }
+
+      expect(response.body).to include("alt=\"#{company.fantasy_name}\"")
     end
 
     it "redirects invalid tokens" do

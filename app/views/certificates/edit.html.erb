@@ -98,7 +98,8 @@
           <div data-certificate-editor-target="artworkControls" class="space-y-4">
             <div>
               <%= form.label :artwork, "Arte do certificado", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
-              <%= form.file_field :artwork, accept: "image/*", data: { certificate_editor_target: "background" }, class: "mt-1 block w-full text-sm text-gray-500" %>
+              <%= form.file_field :artwork, accept: "image/png,image/jpeg", data: { certificate_editor_target: "background" }, class: "mt-1 block w-full text-sm text-gray-500" %>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">PNG ou JPEG; máximo de 5 MB.</p>
             </div>
             <div>
               <%= form.label :background_opacity, "Transparência da arte", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
@@ -107,7 +108,8 @@
           </div>
           <div data-certificate-editor-target="sealControls" class="hidden">
             <%= form.label :verification_seal, "Selo de verificação", class: "block text-sm font-medium text-gray-900 dark:text-white" %>
-            <%= form.file_field :verification_seal, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500" %>
+            <%= form.file_field :verification_seal, accept: "image/png,image/jpeg", class: "mt-1 block w-full text-sm text-gray-500" %>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">PNG ou JPEG; máximo de 2 MB.</p>
           </div>
           <div data-certificate-editor-target="descriptionControls" class="hidden space-y-4">
             <div>

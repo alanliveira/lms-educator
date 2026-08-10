@@ -9,13 +9,14 @@ class ApplicationController < ActionController::Base
   prepend_before_action :redirect_to_initial_setup
   prepend_before_action :set_current_company_from_subdomain
   before_action :set_current_request_details
+  before_action :set_navigation
 
   private
 
   def redirect_to_wrong_domain
     return if initial_setup_required?
-    return if tenant_subdomain.present? && !RESERVED_SUBDOMAINS.include?(tenant_subdomain)
     return if public_domain_controller?
+    return if tenant_subdomain.present? && Company.exists?(subdomain: tenant_subdomain)
 
     redirect_to wrong_domain_path
   end
@@ -55,7 +56,19 @@ class ApplicationController < ActionController::Base
     Current.ip_address = request.ip
   end
 
-  def set_redirect_to(user = Current.user)
+  def set_navigation
+    @page_company = Current.company
+    return unless Current.user
+
+    @navigation = {
+      company: Current.company,
+      session: Current.session,
+      show_users: !Current.user.has_role?(:student),
+      show_companies: Current.user.has_role?(:admin)
+    }
+  end
+
+  def set_redirect_to(_user = Current.user)
     root_path
   end
 

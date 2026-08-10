@@ -27,7 +27,7 @@
     </thead>
     <tbody>
       <% companies.each do |company| %>
-        <%= render company %>
+        <%= render 'company', company: company %>
       <% end %>
     </tbody>
   </table>

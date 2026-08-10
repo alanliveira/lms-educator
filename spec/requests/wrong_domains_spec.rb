@@ -31,11 +31,29 @@ RSpec.describe "Wrong domain", type: :request do
     expect(response).to redirect_to(wrong_domain_path)
   end
 
+  it "redirects requests from an unregistered subdomain to the wrong domain page" do
+    create_admin_tenant
+    host! "unknown.lvh.me"
+
+    get root_path
+
+    expect(response).to redirect_to(wrong_domain_path)
+  end
+
   it "treats admin.localhost as an admin tenant subdomain" do
     create_admin_tenant
     host! "admin.localhost"
 
     get root_path
+
+    expect(response).to redirect_to(sign_in_path)
+  end
+
+  it "redirects the wrong domain page to sign in for a registered subdomain" do
+    create_admin_tenant
+    host! "admin.lvh.me"
+
+    get wrong_domain_path
 
     expect(response).to redirect_to(sign_in_path)
   end
@@ -51,6 +69,29 @@ RSpec.describe "Wrong domain", type: :request do
     expect(response.body).to include("contact_phone")
     expect(response.body).to include("contact_whatsapp")
     expect(response.body).to include("contact_email")
+  end
+
+  it "shows the admin company logo" do
+    admin_company, = create_admin_tenant
+    admin_company.logo.attach(
+      io: StringIO.new(File.binread(Rails.root.join("spec/fixtures/files/logo.png"))),
+      filename: "logo.png",
+      content_type: "image/png"
+    )
+
+    get wrong_domain_path
+
+    expect(response.body).to include("alt=\"#{admin_company.fantasy_name}\"")
+  end
+
+  it "includes the requested subdomain in the contact form" do
+    create_admin_tenant
+    host! "unknown.lvh.me"
+
+    get wrong_domain_path
+
+    expect(response.body).to include('name="contact[subdomain]"')
+    expect(response.body).to include('value="unknown"')
   end
 
   it "sends contact requests to admin users from the admin subdomain" do

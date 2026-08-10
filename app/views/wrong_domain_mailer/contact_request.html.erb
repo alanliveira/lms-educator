@@ -1,4 +1,5 @@
-<p>Um visitante acessou a plataforma sem subdomínio e solicitou contato.</p>
+<p>Um visitante acessou a plataforma por um subdomínio inválido e solicitou contato.</p>
+<p><strong>Subdomínio informado:</strong> <%= @contact[:subdomain].presence || "Nenhum" %></p>
 <p><strong>Nome:</strong> <%= @contact[:name] %></p>
 <p><strong>Telefone:</strong> <%= @contact[:phone] %></p>
 <p><strong>Email:</strong> <%= @contact[:email] %></p>

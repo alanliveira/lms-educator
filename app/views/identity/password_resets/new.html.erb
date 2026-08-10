@@ -1,8 +1,9 @@
 <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto md:h-screen pt:mt-0 dark:bg-gray-900">
+  <%= render "layouts/authentication_brand", company: @company %>
   <!-- Card -->
   <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800">
     <div class="w-full p-6 sm:p-8">
-      <%= render 'shared/notification' %>
+      <%= render 'shared/notification', alert_message: flash[:alert], notice_message: flash[:notice] %>
       <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
         Esqueceu sua senha?
       </h2>

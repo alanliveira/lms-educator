@@ -1,0 +1,8 @@
+<%= link_to sign_in_path, class: "flex flex-col items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white" do %>
+  <% if company.present? %>
+    <%= render "layouts/company_logo", company: company, class_name: "h-20 max-w-72 object-contain" %>
+    <%= tag.span company.fantasy_name %>
+  <% else %>
+    <span>Aprenda Web</span>
+  <% end %>
+<% end %>

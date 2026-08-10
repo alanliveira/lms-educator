@@ -38,7 +38,8 @@ module Authentication
   end
 
   def after_authentication_url
-    session.delete(:return_to_after_authenticating) || set_redirect_to
+    session.delete(:return_to_after_authenticating)
+    courses_path
   end
 
   def start_new_session_for(user)

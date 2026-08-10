@@ -1,14 +1,16 @@
 class CoursesController < ApplicationController
   before_action :set_course, only: %i[show edit update destroy]
+  before_action :set_course_permissions
 
   # GET /courses
   def index
-    @courses = policy_scope(Course).order(id: :desc).page(params[:page]).per(params[:per])
+    @courses = policy_scope(Course).with_attached_thumbnail.order(id: :desc).page(params[:page]).per(params[:per])
   end
 
   # GET /courses/1
   def show
-    @course_classes = @course.course_classes.page(params[:page]).per(params[:per])
+    @course_classes = @course.course_classes.with_attached_thumbnail.page(params[:page]).per(params[:per])
+    @course_viewable = CourseVisibilityService.new(course: @course, company: Current.company).viewable?
   end
 
   # GET /courses/new
@@ -50,6 +52,12 @@ class CoursesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_course
     @course = policy_scope(Course).find(params[:id])
+  end
+
+  def set_course_permissions
+    @can_manage_courses = Current.user.has_role?(:admin)
+    @can_toggle_course_visibility = Current.user.has_role?(:company)
+    @course_access_company_id = Current.company&.id
   end
 
   # Only allow a list of trusted parameters through.

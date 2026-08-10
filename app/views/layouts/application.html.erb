@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Portal Educacional - <%= " - #{Current.company.subdomain}" if Current&.company&.subdomain %></title>
+    <title>Portal Educacional - <%= " - #{@page_company.subdomain}" if @page_company&.subdomain %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,7 +11,7 @@
     <script src="//vjs.zencdn.net/8.3.0/video.min.js" data-turbo-track="reload"></script>
   </head>
   <body class="bg-gray-50 dark:bg-gray-900" data-controller="ui-dark-mode ui-traked-user">
-    <%= render 'layouts/navbar' if Current.user.present? %>
+    <%= render 'layouts/navbar', navigation: @navigation if @navigation %>
     <main class="px-4 2xl:px-0 pt-16 grid grid-cols-1 bg-gray-50 dark:bg-gray-900">
       <%# render 'layouts/sidebar' %>
       <%= yield %>

@@ -1,20 +1,17 @@
 class CourseClassesController < ApplicationController
   before_action :find_course
   before_action :find_course_class, except: [:new, :create]
+  before_action :set_course_class_permissions
 
   def show
     @certificate = @course.certificate
-    @course_completed = CourseClassCompletion.course_completed?(Current.user, @course)
+    @course_completed = course_completion.completed?
+    @course_classes = @course.course_classes.with_attached_thumbnail
   end
 
   def complete
-    completion = Current.user.course_class_completions.find_or_initialize_by(course_class: @course_class)
-    completion.completed_at ||= Time.current
-    completion.save!
-
-    certificate_ready = CourseClassCompletion.course_completed?(Current.user, @course)
-    CourseClassCompletion.issue_certificate_for!(Current.user, @course) if certificate_ready
-    render json: { completed: true, certificate_ready: certificate_ready }
+    certificate_ready = course_completion.complete!(course_class: @course_class)
+    render json: { completed: true, certificate_ready: }
   end
 
   def new
@@ -65,7 +62,14 @@ class CourseClassesController < ApplicationController
   end
 
   def course_class_params
-    params.require(:course_class).permit(:name, :description, :thumbnail, :video, :attachments)
+    params.require(:course_class).permit(:name, :description, :thumbnail, :video, attachments: [])
   end
 
+  def course_completion
+    @course_completion ||= CourseCompletionService.new(user: Current.user, course: @course)
+  end
+
+  def set_course_class_permissions
+    @can_manage_course_classes = Current.user.has_role?(:admin)
+  end
 end

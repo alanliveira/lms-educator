@@ -9,15 +9,11 @@ class SetupController < ApplicationController
   end
 
   def create
-    build_setup_records
-    @company.assign_attributes(company_params.merge(subdomain: "admin"))
-    @owner.assign_attributes(user_params.merge(active: true, verified: true))
-    @company.users << @owner
+    creation = Setup::CreateService.new(company_attributes: company_params, owner_attributes: user_params)
+    @company = creation.company
+    @owner = creation.owner
 
-    if @company.save
-      @company.company_users.find_by!(user: @owner).update!(owner: true)
-      @owner.remove_role(:student)
-      @owner.add_role(:admin)
+    if creation.call
       redirect_to sign_in_path, notice: "Empresa e usuário administrador criados com sucesso."
     else
       render :new, status: :unprocessable_content

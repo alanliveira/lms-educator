@@ -32,7 +32,7 @@
       <tbody>
         <% users.each do |user| %>
           <%= turbo_frame_tag user do %>
-            <%= render user %>
+            <%= render 'user', user: user %>
           <% end %>
         <% end %>
       </tbody>
