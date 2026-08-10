@@ -1,46 +1,51 @@
-class Identity::PasswordResetsController < ApplicationController
-  allow_unauthenticated_access
-  before_action :set_user, only: %i[edit update]
+module Identity
+  class PasswordResetsController < ApplicationController
+    allow_unauthenticated_access
+    before_action :set_user, only: %i[edit update]
+    before_action :set_brand_company
 
-  layout 'authentication'
+    layout 'authentication'
 
-  def new
-  end
+    def new; end
 
-  def edit
-  end
+    def edit; end
 
-  def create
-    if @user = User.find_by(email: params[:email], verified: true)
-      send_password_reset_email
-      redirect_to sign_in_path, notice: "Verifique o seu email para instruções"
-    else
-      redirect_to new_identity_password_reset_path,
-                  alert: "Você não pode resetar sua senha, verifique o email digitado e tente novamente"
+    def create
+      if (@user = User.find_by(email: params[:email], verified: true))
+        send_password_reset_email
+        redirect_to sign_in_path, notice: "Verifique o seu email para instruções"
+      else
+        redirect_to new_identity_password_reset_path,
+                    alert: "Você não pode resetar sua senha, verifique o email digitado e tente novamente"
+      end
     end
-  end
 
-  def update
-    if @user.update(user_params)
-      redirect_to sign_in_path, notice: "Sua senha foi alterada com sucesso. Faça o login"
-    else
-      render :edit, status: :unprocessable_content
+    def update
+      if @user.update(user_params)
+        redirect_to sign_in_path, notice: "Sua senha foi alterada com sucesso. Faça o login"
+      else
+        render :edit, status: :unprocessable_content
+      end
     end
-  end
 
-  private
+    private
 
-  def set_user
-    @user = User.find_by_token_for!(:password_reset, params[:sid])
-  rescue StandardError
-    redirect_to new_identity_password_reset_path, alert: "Link para resetar a senha está inválido"
-  end
+    def set_user
+      @user = User.find_by_token_for!(:password_reset, params[:sid])
+    rescue StandardError
+      redirect_to new_identity_password_reset_path, alert: "Link para resetar a senha está inválido"
+    end
 
-  def user_params
-    params.permit(:password, :password_confirmation)
-  end
+    def user_params
+      params.permit(:password, :password_confirmation)
+    end
 
-  def send_password_reset_email
-    UserMailer.with(user: @user).password_reset.deliver_later
+    def send_password_reset_email
+      UserMailer.with(user: @user).password_reset.deliver_later
+    end
+
+    def set_brand_company
+      @company = Current.company || Company.find_by(subdomain: "admin")
+    end
   end
 end

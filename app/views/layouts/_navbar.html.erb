@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <div class="flex justify-start items-center">
         <%= link_to root_path, class: "flex items-center mr-14", aria: { label: "Página inicial" } do %>
-          <%= render "layouts/company_logo", class_name: "h-8 max-w-36 object-contain" %>
+          <%= render "layouts/company_logo", company: navigation[:company], class_name: "h-8 max-w-36 object-contain" %>
         <% end %>
         <!-- Desktop menu -->
         <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1">
@@ -14,7 +14,12 @@
                           class: 'block text-gray-700 hover:text-primary-700 dark:text-gray-400 dark:hover:text-white',
                           aria: { current: 'page' } %>
             </li>
-            <% unless Current.user.has_role?(:student) %>
+            <li>
+              <%= link_to 'Sessões',
+                          sessions_path,
+                          class: 'block text-gray-700 hover:text-primary-700 dark:text-gray-400 dark:hover:text-white' %>
+            </li>
+            <% if navigation[:show_users] %>
               <li>
                 <%= link_to 'Usuários',
                           users_path,
@@ -22,7 +27,7 @@
                           aria: { current: 'page' } %>
               </li>
             <% end %>
-            <% if Current.user.has_role?(:admin) %>
+            <% if navigation[:show_companies] %>
               <li>
                 <%= link_to 'Empresas',
                           companies_path,
@@ -45,7 +50,7 @@
         </div>
         <%# User profile %>
         <%= button_to "Sair",
-                      Current.session,
+                      navigation[:session],
                       method: :delete,
                       class: 'hidden lg:block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5' %>
         <button type="button" id="toggleMobileMenuButton" data-collapse-toggle="toggleMobileMenu" class="items-center p-2 text-gray-500 rounded-lg md:ml-2 lg:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
@@ -65,7 +70,13 @@
                     data: { turbo: false },
                     aria: { current: 'page' } %>
       </li>
-      <% unless Current.user.has_role?(:student) %>
+      <li class="block border-b dark:border-gray-700">
+        <%= link_to 'Sessões',
+                    sessions_path,
+                    class: 'block py-3 px-4 text-gray-900 lg:py-0 dark:text-white lg:hover:underline lg:px-0',
+                    data: { turbo: false } %>
+      </li>
+      <% if navigation[:show_users] %>
         <li class="block border-b dark:border-gray-700">
           <%= link_to 'Usuários',
                       users_path,
@@ -74,7 +85,7 @@
                       aria: { current: 'page' } %>
         </li>
       <% end %>
-      <% if Current.user.has_role?(:admin) %>
+      <% if navigation[:show_companies] %>
         <li class="block border-b dark:border-gray-700">
           <%= link_to 'Empresas',
                       companies_path,
@@ -85,7 +96,7 @@
       <% end %>
       <li class="block border-b dark:border-gray-700">
         <%= link_to 'Sair',
-                    session_path(Current.session),
+                    session_path(navigation[:session]),
                     class: 'block py-3 px-4 text-gray-900 lg:py-0 dark:text-white lg:hover:underline lg:px-0',
                     data: { turbo_method: :delete },
                     aria: { current: 'page' } %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_27_060000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_10_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -96,6 +96,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_060000) do
     t.boolean "can_be_viewed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["company_id", "can_be_viewed"], name: "index_company_courses_on_company_id_and_can_be_viewed"
     t.index ["company_id", "course_id"], name: "index_company_courses_on_company_id_and_course_id", unique: true
     t.index ["company_id"], name: "index_company_courses_on_company_id"
     t.index ["course_id"], name: "index_company_courses_on_course_id"
@@ -133,6 +134,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_060000) do
     t.datetime "updated_at", null: false
     t.text "description"
     t.datetime "deleted_at"
+    t.index ["course_id", "id"], name: "index_course_classes_on_course_id_and_id"
     t.index ["course_id"], name: "index_course_classes_on_course_id"
     t.index ["deleted_at"], name: "index_course_classes_on_deleted_at"
   end
@@ -171,6 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_060000) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_sessions_on_user_id_and_created_at", order: { created_at: :desc }
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 

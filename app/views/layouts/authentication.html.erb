@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Portal educacional<%= " - #{Current.company.subdomain}" if Current&.company&.subdomain %></title>
+    <title>Portal educacional<%= " - #{@page_company.subdomain}" if @page_company&.subdomain %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

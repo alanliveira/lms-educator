@@ -49,7 +49,7 @@
         </div>
         <div class="flex items-center space-x-4">
           <%# Ação principal %>
-          <% if Current.user.has_role?(:admin) %>
+          <% if @can_manage_course_classes %>
             <div class="flex gap-2">
               <%= link_to "Editar aula",
                           edit_course_course_class_path([@course, @course_class]),
@@ -69,7 +69,7 @@
       </div>
       <div class="flow-root">
         <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-          <% @course.course_classes.each do |cc| %>
+          <% @course_classes.each do |cc| %>
             <li id="<%= dom_id(cc) %>" class="course-class<%= " course-class-active" if cc == @course_class %> py-3 sm:py-4">
               <%= link_to course_course_class_path(@course, cc), data: { turbo: false } do %>
                 <div class="flex items-center">

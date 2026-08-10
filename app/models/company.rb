@@ -3,8 +3,14 @@ class Company < ApplicationRecord
 
   has_one_attached :logo
 
+  validates :logo,
+            content_type: %w[image/png image/jpeg image/webp],
+            size: { less_than_or_equal_to: 2.megabytes }
+
   has_many :company_users, dependent: :destroy
   has_many :users, through: :company_users
+  has_one :owner_company_user, -> { where(owner: true) }, class_name: "CompanyUser"
+  has_one :owner, through: :owner_company_user, source: :user
   has_many :company_courses, dependent: :destroy
   has_many :courses, through: :company_courses
 
@@ -17,9 +23,4 @@ class Company < ApplicationRecord
 
   accepts_nested_attributes_for :users
   accepts_nested_attributes_for :company_courses
-
-  def owner
-    owner = company_users.where(owner: true).first
-    owner&.user
-  end
 end

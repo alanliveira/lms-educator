@@ -12,7 +12,7 @@ RSpec.describe "Authentication flows", type: :request do
         end.to change { user.sessions.count }.by(1)
       end.to change { user.histories.count }.by(1)
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(courses_path)
       expect(user.histories.last.action).to eq("Entrou na plataforma")
     end
 

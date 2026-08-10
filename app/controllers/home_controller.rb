@@ -1,3 +1,6 @@
 class HomeController < ApplicationController
-  def index; end
+  def index
+    @user = Current.user
+    @session = Current.session
+  end
 end

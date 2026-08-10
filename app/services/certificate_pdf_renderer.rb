@@ -13,7 +13,7 @@ class CertificatePdfRenderer
     "Verdana" => "DejaVuSans.ttf",
     "Trebuchet MS" => "DejaVuSans.ttf"
   }.freeze
-  FONT_DIRECTORY = "/usr/share/fonts/truetype/dejavu"
+  FONT_DIRECTORY = "/usr/share/fonts/truetype/dejavu".freeze
 
   def initialize(certificate, user, verification_url: nil)
     @certificate = certificate
@@ -84,9 +84,9 @@ class CertificatePdfRenderer
 
     pdf.fill_color(normalize_color(settings["color"]))
     pdf.font_families.update("CertificateBody" => {
-      normal: font_path(settings["font_family"]),
-      bold: bold_font_path(settings["font_family"])
-    })
+                               normal: font_path(settings["font_family"]),
+                               bold: bold_font_path(settings["font_family"])
+                             })
     pdf.font("CertificateBody") do
       pdf.formatted_text_box description_parts,
                               at: top_left(settings),
@@ -130,10 +130,10 @@ class CertificatePdfRenderer
   def description_parts
     template = @certificate.description.presence || "Certificamos que {{ nome_do_aluno }} concluiu o curso {{ titulo_curso }}."
     fields = description_fields
-    CGI.unescapeHTML(template.to_s).split(/(\{\{\s*[\w]+\s*\}\})/).filter_map do |part|
+    CGI.unescapeHTML(template.to_s).split(/(\{\{\s*\w+\s*\}\})/).filter_map do |part|
       next if part.empty?
 
-      match = part.match(/\A\{\{\s*([\w]+)\s*\}\}\z/)
+      match = part.match(/\A\{\{\s*(\w+)\s*\}\}\z/)
       if match
         [{ text: fields.fetch(match[1], match[0]), styles: [:bold] }]
       else
@@ -154,7 +154,7 @@ class CertificatePdfRenderer
   end
 
   def completion_date
-    completed_at = CourseClassCompletion.completed_at_for(@user, @course)
+    completed_at = CourseCompletionService.new(user: @user, course: @course).completed_at
     I18n.l((completed_at || Time.current).to_date, format: :default)
   end
 

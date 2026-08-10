@@ -1,16 +1,8 @@
 <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto md:h-screen pt:mt-0 dark:bg-gray-900">
-  <a href="" class="flex flex-col items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white">
-    <%# <img src="/images/logo.svg" class="mr-4 h-11" alt="FlowBite Logo"> %>
-    <% if Current.company.present? %>
-      <%= render "layouts/company_logo", class_name: "h-20 max-w-72 object-contain" %>
-      <%= tag.span Current.company.fantasy_name%>
-    <% else %>
-      <span>Aprenda Web</span>
-    <% end %>
-  </a>
+  <%= render "layouts/authentication_brand", company: @company %>
   <!-- Card -->
   <div class="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800">
-    <%= render 'shared/notification' %>
-    <%= render 'authentication' %>
+    <%= render 'shared/notification', alert_message: flash[:alert], notice_message: flash[:notice] %>
+    <%= render 'authentication', user: @user %>
   </div>
 </div>

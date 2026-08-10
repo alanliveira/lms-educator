@@ -1,6 +1,6 @@
 <div class="grid w-full grid-cols-1 pt-6 2xl:px-4 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
   <div class="mb-4 col-span-full xl:mb-2">
-    <%= render 'shared/notification' %>
+    <%= render 'shared/notification', alert_message: flash[:alert], notice_message: flash[:notice] %>
     <div class="flex items-center mb-4 sm:mb-0">
       <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
         <div class="flex">
@@ -31,7 +31,7 @@
           </div>
           <div class="flex items-center space-x-4">
             <%# Ação principal %>
-            <% if Current.user.has_role?(:admin) %>
+            <% if @can_manage_company %>
               <div class="flex gap-2">
                 <%= link_to "Editar",
                       edit_company_path(@company),
@@ -59,9 +59,9 @@
         <div class="flex justify-between mb-4">
           <%= form_with model: @company, url: add_course_company_path, class: 'w-full mb-3' do |f| %>
             <div class="relative w-full mr-3 flex gap-4">
-              <%= f.fields_for :company_courses, @company.company_courses.build do |cc| %>
+              <%= f.fields_for :company_courses, @company_course do |cc| %>
                 <%= cc.collection_select :course_id,
-                               Course.where.not(id: @company.courses.pluck(:id)),
+                               @available_courses,
                                :id,
                                :name,
                                { prompt: 'Adicione um curso' },
@@ -72,9 +72,9 @@
             </div>
           <% end %>
         </div>
-        <% if @company.courses.present? %>
+        <% if @company_courses.present? %>
           <div class="grid gap-4">
-            <% @company.courses.each do |course| %>
+            <% @company_courses.each do |course| %>
               <div class="flex flex-col items-center bg-white border border-gray-200 rounded-md shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                 <%= image_tag course.thumbnail, class: 'object-cover w-full rounded-t-lg h-30 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg' %>
                 <div class="flex flex-col h-full w-full justify-between p-4 leading-normal">

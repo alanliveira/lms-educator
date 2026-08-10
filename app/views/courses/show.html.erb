@@ -1,6 +1,6 @@
 <div class="grid w-full grid-cols-1 pt-6 2xl:px-4 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
   <div class="mb-4 col-span-full xl:mb-2">
-    <%= render 'shared/notification' %>
+    <%= render 'shared/notification', alert_message: flash[:alert], notice_message: flash[:notice] %>
     <div class="flex items-center mb-4 sm:mb-0">
       <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
         <div class="flex">
@@ -29,20 +29,20 @@
           </div>
           <div class="flex items-center space-x-4">
             <%# Ação principal %>
-            <% unless Current.user.has_role?(:admin) || Current.user.has_role?(:student) %>
-              <% if @course&.can_be_viewed? %>
+            <% if @can_toggle_course_visibility %>
+              <% if @course_viewable %>
                 <%= link_to "Deixar privado",
-                            course_access_company_path(id: Current.company.id, course_id: @course.id),
+                            course_access_company_path(id: @course_access_company_id, course_id: @course.id),
                             data: { turbo_method: :patch, turbo_confirm: 'Remover visibilidade dos colaboradores?' },
                             class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800' %>
               <% else %>
                 <%= link_to "Liberar acesso",
-                        course_access_company_path(id: Current.company.id, course_id: @course.id),
+                        course_access_company_path(id: @course_access_company_id, course_id: @course.id),
                         data: { turbo_method: :patch, turbo_confirm: 'Liberar acesso para os colaboradores?' },
                         class: 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800' %>
               <% end %>
             <% end %>
-            <% if Current.user.has_role?(:admin) %>
+            <% if @can_manage_courses %>
               <div class="flex gap-2">
                 <%= link_to "Editar certificado",
                       edit_course_certificate_path(@course),
@@ -68,7 +68,7 @@
         <h3 class="mb-4 text-xl font-semibold dark:text-white">
           Aulas
         </h3>
-        <% if Current.user.has_role?(:admin) %>
+        <% if @can_manage_courses %>
           <%= link_to 'Adicionar aula',
                       new_course_course_class_path(@course),
                       class: 'text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800' %>

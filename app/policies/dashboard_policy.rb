@@ -9,11 +9,9 @@ class DashboardPolicy < ApplicationPolicy
     user.active && user.has_role?(:admin)
   end
 
-
   def student?
     user.active && user.has_role?(:student)
   end
-
 
   def company?
     user.active && user.has_role?(:company)

@@ -3,16 +3,18 @@ class SessionsController < ApplicationController
   before_action :set_session, only: :destroy
   before_action :find_company, only: [:new]
 
-  layout 'authentication'
+  layout 'authentication', except: [:index]
 
   def index
     @sessions = Current.user.sessions.order(created_at: :desc)
   end
 
-  def new; end
+  def new
+    @user = User.new(email_address: params[:email_hint])
+  end
 
   def create
-    if user = authenticatable_user
+    if (user = authenticatable_user)
       @session = start_new_session_for(user)
       History.create(user:, action: "Entrou na plataforma")
 

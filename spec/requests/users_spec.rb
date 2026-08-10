@@ -54,6 +54,17 @@ RSpec.describe "Users", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "shows the current role to admins editing a user" do
+      admin = create(:user, role: :admin)
+      company = create(:company)
+      student = create(:user, company: company, role: :student)
+      sign_in(admin)
+
+      get edit_user_path(student)
+
+      expect(response.body).to include("Role atual: Colaborador")
+    end
+
     it "toggles user status" do
       company = create(:company)
       company_user = create(:user, company: company, role: :company)
@@ -111,6 +122,124 @@ RSpec.describe "Users", type: :request do
       }
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "lets an admin replace a user's role and company" do
+      admin = create(:user, role: :admin)
+      first_company = create(:company)
+      second_company = create(:company)
+      student = create(:user, company: first_company, role: :student)
+      sign_in(admin)
+
+      patch user_path(student), params: {
+        user: {
+          email: student.email,
+          department: student.department,
+          full_name: student.full_name,
+          role: "company",
+          company_user_attributes: { id: student.company_user.id, company_id: second_company.id }
+        }
+      }
+
+      expect(response).to redirect_to(user_path(student))
+      expect(student.reload.has_role?(:company)).to be(true)
+      expect(student.has_role?(:student)).to be(false)
+      expect(student.company).to eq(second_company)
+    end
+
+    it "prevents an admin from changing their own role" do
+      admin = create(:user, role: :admin)
+      company = create(:company)
+      sign_in(admin)
+
+      patch user_path(admin), params: {
+        user: {
+          email: admin.email,
+          department: admin.department,
+          full_name: admin.full_name,
+          role: "student",
+          company_user_attributes: { company_id: company.id }
+        }
+      }
+
+      expect(response).to redirect_to(edit_user_path(admin))
+      expect(admin.reload.has_role?(:admin)).to be(true)
+    end
+
+    it "prevents an admin from reclassifying a company owner" do
+      admin = create(:user, role: :admin)
+      company = create(:company)
+      owner = create(:user, company: company, role: :company, owner: true)
+      sign_in(admin)
+
+      patch user_path(owner), params: {
+        user: {
+          email: owner.email,
+          department: owner.department,
+          full_name: owner.full_name,
+          role: "student",
+          company_user_attributes: { id: owner.company_user.id, company_id: company.id }
+        }
+      }
+
+      expect(response).to redirect_to(edit_user_path(owner))
+      expect(owner.reload.has_role?(:company)).to be(true)
+    end
+
+    it "lets a company user promote only a student from its own company" do
+      company = create(:company)
+      company_user = create(:user, company: company, role: :company)
+      student = create(:user, company: company, role: :student)
+      sign_in(company_user)
+
+      patch user_path(student), params: {
+        user: {
+          email: student.email,
+          department: student.department,
+          full_name: student.full_name,
+          role: "company"
+        }
+      }
+
+      expect(response).to redirect_to(user_path(student))
+      expect(student.reload.has_role?(:company)).to be(true)
+    end
+
+    it "prevents a company user from assigning the admin role" do
+      company = create(:company)
+      company_user = create(:user, company: company, role: :company)
+      student = create(:user, company: company, role: :student)
+      sign_in(company_user)
+
+      patch user_path(student), params: {
+        user: {
+          email: student.email,
+          department: student.department,
+          full_name: student.full_name,
+          role: "admin"
+        }
+      }
+
+      expect(response).to redirect_to(edit_user_path(student))
+      expect(student.reload.has_role?(:student)).to be(true)
+    end
+
+    it "prevents a company user from changing another company user" do
+      company = create(:company)
+      company_user = create(:user, company: company, role: :company)
+      other_company_user = create(:user, company: company, role: :company)
+      sign_in(company_user)
+
+      patch user_path(other_company_user), params: {
+        user: {
+          email: other_company_user.email,
+          department: other_company_user.department,
+          full_name: "Changed"
+        }
+      }
+
+      expect(response).to redirect_to(users_path)
+      expect(other_company_user.reload.full_name).not_to eq("Changed")
     end
   end
 

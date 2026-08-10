@@ -38,7 +38,8 @@
           </div>
           <div>
             <%= company_form.label :logo, class: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" %>
-            <%= company_form.file_field :logo, required: true, class: "w-full block text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600" %>
+            <%= company_form.file_field :logo, required: true, accept: "image/png,image/jpeg,image/webp", class: "w-full block text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600" %>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">PNG, JPEG ou WebP; máximo de 2 MB.</p>
           </div>
         <% end %>
       </div>

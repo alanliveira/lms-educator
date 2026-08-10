@@ -11,6 +11,20 @@ RSpec.describe "Registrations", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Criar conta")
     end
+
+    it "shows the company logo for the subdomain" do
+      company = create(:company, subdomain: "signup-logo")
+      company.logo.attach(
+        io: StringIO.new(File.binread(Rails.root.join("spec/fixtures/files/logo.png"))),
+        filename: "logo.png",
+        content_type: "image/png"
+      )
+      host! "#{company.subdomain}.lvh.me"
+
+      get sign_up_path
+
+      expect(response.body).to include("alt=\"#{company.fantasy_name}\"")
+    end
   end
 
   describe "POST /sign_up" do

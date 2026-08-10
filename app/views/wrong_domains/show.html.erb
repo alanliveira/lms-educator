@@ -1,6 +1,13 @@
 <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto md:min-h-screen dark:bg-gray-900">
+  <% if @admin_company.present? %>
+    <div class="flex flex-col items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white">
+      <%= render "layouts/company_logo", company: @admin_company, class_name: "h-20 max-w-72 object-contain" %>
+      <%= tag.span @admin_company.fantasy_name %>
+    </div>
+  <% end %>
+
   <div class="w-full max-w-2xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800">
-    <%= render "shared/notification" %>
+    <%= render "shared/notification", alert_message: flash[:alert], notice_message: flash[:notice] %>
 
     <div class="space-y-2">
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Página errada</h1>
@@ -10,6 +17,8 @@
     </div>
 
     <%= form_with url: wrong_domain_contact_path, scope: :contact, class: "space-y-5" do |form| %>
+      <%= form.hidden_field :subdomain, value: @contact[:subdomain] %>
+
       <div>
         <%= form.label :name, "Nome", class: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" %>
         <%= form.text_field :name, value: @contact[:name], required: true, autocomplete: "name", class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" %>

@@ -4,11 +4,14 @@ class WrongDomainsController < ApplicationController
   layout "authentication"
 
   def show
-    @contact = contact_params
+    redirect_to sign_in_path and return if Company.exists?(subdomain: tenant_subdomain)
+
+    @admin_company = Company.find_by(subdomain: "admin")
+    @contact = contact_params.merge(subdomain: tenant_subdomain)
   end
 
   def create
-    @contact = contact_params
+    @contact = contact_params.merge(subdomain: tenant_subdomain)
 
     if contact_valid?
       WrongDomainMailer.with(contact: @contact).contact_request.deliver_later
@@ -22,7 +25,7 @@ class WrongDomainsController < ApplicationController
   private
 
   def contact_params
-    params.fetch(:contact, {}).permit(:name, :phone, :email, :whatsapp).to_h.symbolize_keys
+    params.fetch(:contact, {}).permit(:name, :phone, :email, :whatsapp, :subdomain).to_h.symbolize_keys
   end
 
   def contact_valid?

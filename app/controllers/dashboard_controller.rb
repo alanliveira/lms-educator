@@ -4,14 +4,12 @@ class DashboardController < ApplicationController
     @users = User.all
   end
 
-
   def student
     authorize :dashboard
   end
 
-
   def company
-    authorize :dashboard    
+    authorize :dashboard
     @users = User.with_role(:student)
   end
 end

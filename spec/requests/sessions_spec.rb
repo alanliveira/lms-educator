@@ -28,7 +28,7 @@ RSpec.describe "Sessions", type: :request do
       post sign_in_path, params: { user: { email: user.email, password: TestPassword::VALUE } }
     end.to change(Session, :count).by(1)
 
-    expect(response).to redirect_to(root_path)
+    expect(response).to redirect_to(courses_path)
     expect(response.cookies["session_id"]).to be_present
     expect(Session.last).to have_attributes(user: user)
   end
@@ -70,5 +70,16 @@ RSpec.describe "Sessions", type: :request do
     expect(response).to redirect_to(sessions_path)
     expect(Session.exists?(current_session.id)).to be(false)
     expect(response.cookies["session_id"]).to be_nil
+  end
+
+  it "always redirects to courses after authentication" do
+    company = create(:company, subdomain: "courses-after-login")
+    user = create(:user, company: company)
+    host! "#{company.subdomain}.lvh.me"
+
+    get sessions_path
+    post sign_in_path, params: { user: { email: user.email, password: TestPassword::VALUE } }
+
+    expect(response).to redirect_to(courses_path)
   end
 end

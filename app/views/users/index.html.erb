@@ -1,6 +1,6 @@
 <div class="pt-6 2xl:px-4">
   <div class="grid gap-4 grid-cols-1">
-    <%= render 'shared/notification' %>
+    <%= render 'shared/notification', alert_message: flash[:alert], notice_message: flash[:notice] %>
     <%# CAbeçalho %>
     <div class="col-span-1 flex items-center justify-between md:divide-x md:divide-gray-100 dark:divide-gray-700">
       <%# Título da página %>

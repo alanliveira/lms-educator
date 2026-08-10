@@ -1,6 +1,6 @@
 <p style="color: green"><%= notice %></p>
 
-<p>Signed as <%= Current.user.email %></p>
+<p>Signed as <%= @user.email %></p>
 
 <h2>Login and verification</h2>
 
@@ -20,4 +20,4 @@
 
 <br>
 
-<%= button_to "Log out", Current.session, method: :delete %>
+<%= button_to "Log out", @session, method: :delete %>
