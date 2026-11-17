@@ -74,10 +74,13 @@ COMPANY_DEFAULT_ID=1
 ## 2. Subir o Supabase local (banco de dados)
 
 O projeto usa a **stack local do Supabase** como Postgres de desenvolvimento
-(diretório `supabase/` versionado com o `config.toml`).
+(diretório `supabase/`, **ignorado pelo Git** — cada máquina roda o `supabase init`
+na primeira vez e pode ajustar as portas conforme sua máquina).
 
 ```bash
 supabase init     # só na primeira vez; cria supabase/config.toml
+# se `supabase start` reclamar de porta bloqueada, ajuste o config.toml
+# para a faixa 544xx antes de continuar (ver "Portas locais" abaixo)
 supabase start    # sobe Postgres, API/Kong, Studio, Mailpit etc.
 ```
 
@@ -100,10 +103,10 @@ supabase db reset # recriar o schema do zero
 
 ### Portas locais (importante)
 
-O `supabase/config.toml` deste repositório usa a faixa **544xx** em vez das
-portas padrão da CLI (54320–54329), porque faixas como **53768–54352 são
-bloqueadas pelo Docker nesta máquina** (`Error ... /forwards/expose returned
-unexpected status: 500` ao publicar a porta). Portas mapeadas:
+O `supabase/config.toml` gerado pelo `supabase init` deve usar a faixa **544xx**
+em vez das portas padrão da CLI (54320–54329), porque faixas como **53768–54352
+são bloqueadas pelo Docker nesta máquina** (`Error ... /forwards/expose returned
+unexpected status: 500` ao publicar a porta). Portas usadas aqui:
 
 | Serviço | Porta |
 |---|---|
