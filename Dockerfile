@@ -18,8 +18,10 @@ ENV RAILS_ENV="production" \
 FROM base as build
 
 # Install packages needed to build gems and node modules
+# libyaml-dev: headers for psych (yaml.h) — without it `bundle install` dies
+# with "yaml.h not found" on the slim image.
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips libyaml-dev node-gyp pkg-config python-is-python3
 
 # Install JavaScript dependencies
 ARG NODE_VERSION=22.1.0
@@ -46,7 +48,16 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+# Precompiling assets for production without requiring secret RAILS_MASTER_KEY.
+# `assets:precompile` boots the app with eager loading, which resolves the
+# mailers (from: address) and the Active Storage service (S3 endpoint/keys),
+# so these variables must exist at build time. Only ARG is declared here —
+# docker-compose.yml supplies the values through `build.args`, reading them
+# from .env. Build with `docker compose build`, not `docker build .`.
+ARG EMAIL_ADMINISTRATION_SYSTEM
+ARG SUPABASE_STORAGE_ENDPOINT
+ARG SUPABASE_KEY
+ARG SUPABASE_KEY_SECRET
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 

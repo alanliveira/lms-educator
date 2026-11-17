@@ -1,16 +1,20 @@
 services:
   db:
     image: postgres:16
+    # Credentials come from .env (same values as DATABASE_URL) so they are
+    # typed once. Compose reads .env for ${...} interpolation.
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: educator_lms_development
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d educator_lms_development"]
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB}
       interval: 5s
       timeout: 5s
       retries: 10
@@ -18,17 +22,37 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+      # Build-time variables needed by `assets:precompile` (the app eager loads
+      # the mailers and the Active Storage S3 service while precompiling).
+      # Values come from .env; the defaults only exist so a local build works
+      # without real production secrets.
+      args:
+        EMAIL_ADMINISTRATION_SYSTEM: ${EMAIL_ADMINISTRATION_SYSTEM}
+        SUPABASE_STORAGE_ENDPOINT: ${SUPABASE_STORAGE_ENDPOINT}
+        SUPABASE_KEY: ${SUPABASE_KEY}
+        SUPABASE_KEY_SECRET: ${SUPABASE_KEY_SECRET}
     command: bash -lc "bin/rails db:prepare && bin/rails server -b 0.0.0.0"
     depends_on:
       db:
         condition: service_healthy
+    # Everything else (RAILS_ENV, PORT, EMAIL_HOST, REDIS_URL, ...) is read
+    # from .env instead of being typed here.
+    env_file:
+      - path: .env
+        required: false
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/educator_lms_development
-      RESEND_API_KEY: ""
-      EMAIL_ADMINISTRATION_SYSTEM: admin@example.test
-      EMAIL_HOST: localhost:3000
-      COMPANY_DEFAULT_ID: "0"
+      # Inside the network the Postgres host is `db`, not 127.0.0.1 — this is
+      # the only value that has to override .env (environment > env_file).
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432
+      # The Supabase local stack runs on the host: inside the container
+      # 127.0.0.1 would be the container itself, so swap it for
+      # host.docker.internal (see extra_hosts below).
+      SUPABASE_STORAGE_ENDPOINT: http://host.docker.internal:54421/storage/v1/s3
+    # Lets the container resolve host.docker.internal (Linux; no-op on Docker
+    # Desktop, which provides it natively) — used by the storage endpoint above.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "3000:3000"
     volumes:
