@@ -65,7 +65,7 @@ EMAIL_HOST=localhost:3000
 | `REDIS_URL` | Sim | em development o Action Cable usa `async`, mas a variável é referenciada |
 | `RESEND_API_KEY` | Não | deixe **fora do arquivo**; só é preciso para disparar e-mails reais |
 | `RAILS_MASTER_KEY` | Não | só exigida em produção (não existe `config/master.key` no repo) |
-| `SUPABASE_*` | Não | só usadas em produção (`config.active_storage.service = :supabase`) |
+| `SUPABASE_*` | Não | storage (ver [environment.md](environment.md#storage-active-storage--supabase-s3)) — em dev apontam para o Supabase local ([Storage](#storage-active-storage)) |
 
 > **Empresa padrão do sistema:** não existe variável de ambiente para isso
 > (`COMPANY_DEFAULT_ID` foi removida). A empresa padrão é a criada no setup

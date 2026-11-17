@@ -1,76 +1,97 @@
 # Educator LMS
 
-LMS multi-tenant (Rails 8 + Hotwire + Tailwind) com autenticação por subdomínio, cursos, turmas, certificados e e-mails via Resend.
+Plataforma de ensino à distância (LMS) **multi-tenant** para empresas:
+cursos, turmas, acompanhamento de progresso e **certificados com validação
+pública** — cada empresa no seu próprio subdomínio.
 
-## Pré-requisitos
+Feito em **Rails 8 + Hotwire (Turbo/Stream) + Tailwind**, autenticação por
+sessão com papéis, e-mails via Resend e storage S3 do Supabase.
 
-- Ruby **3.4.4** / Node **22.1.0** (recomendado via [`mise`](https://mise.jdx.dev) — ver `.tool-versions`)
-- Postgres **16** e **Redis** (ou use o `docker-compose.yml`, que sobe o Postgres)
-- `yarn` e `bundler`
+## O que a plataforma faz
 
-## Setup local
+- **Multi-tenancy por subdomínio** — cada empresa é um tenant
+  (`acme.seuapp.com.br`), com dados, usuários e visualização isolados. O
+  subdomínio `admin` é o tenant principal: recebe o setup inicial e hospeda a
+  empresa padrão do sistema (`Company.default`).
+- **Cursos e turmas** — cursos globais com descrição e carga horária, divididos
+  em turmas/aulas; cada empresa só enxerga os cursos **liberados** para ela.
+- **Progresso dos alunos** — conclusão de aula por aula
+  (`course_class_completions`) e cálculo de 100% do curso por usuário.
+- **Certificados com verificação** — ao concluir todas as aulas o aluno baixa
+  um PDF com **código de verificação**; qualquer pessoa valida o certificado em
+  `GET /certificates/<código>`, sem login. O layout do certificado é
+  configurável por curso (elementos posicionados no PDF).
+- **Papéis (Rolify)** — `admin` (gerencia tudo), `company` (gestor da empresa:
+  usuários e visibilidade de cursos) e `student` (aluno).
+- **Usuários e acesso** — cadastro com senha forte, verificação de e-mail,
+  recuperação de senha, contas ativas/inativas, soft delete, sessões ativas e
+  histórico de ações.
+- **Identidade por e-mail** — verificação de e-mail, reset de senha e página de
+  contato para domínio não suportado (`wrong_domain`), tudo via Resend.
+- **Storage de arquivos** — Active Storage no bucket S3 privado
+  `contents-class` do Supabase (logos, anexos), também em development com o
+  Supabase local.
 
-> Passo a passo detalhado (dependências, `.env`, Supabase local, troubleshooting): [`development.md`](development.md).
-> Deploy com Docker / Docker Compose (`.env`, `docker compose config`, build e produção): [`deploy.md`](deploy.md).
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | Ruby **3.4.4** / Rails **8** (Hotwire, Turbo, Action Text, Active Storage) |
+| Front-end | Tailwind CSS + webpack (`app/assets/builds`), importmap-free, yarn |
+| Banco | PostgreSQL **16** (Supabase local em dev) |
+| Cache/cable | Redis (`REDIS_URL`) |
+| E-mail | Resend (SMTP/API) — dev usa MailDev |
+| Storage | Supabase S3 (`contents-class`) |
+| Testes | RSpec + Minitest, RuboCop |
+| Deploy | Docker multi-stage + Docker Compose |
+
+## Subindo localmente
 
 ```bash
-mise install                      # instala versões do .tool-versions
-cp .env.sample .env               # e preencha as variáveis (ver tabela abaixo)
-bundle install
-yarn install
-docker compose config             # valida o .env (o compose interpola ${...} dele)
-docker compose up -d db           # só Postgres, ou use um Postgres local
+mise install                      # versões do .tool-versions
+cp .env.sample .env               # variáveis (ver docs/environment.md)
+bundle install && yarn install
+supabase start                    # Postgres + storage locais (ou docker compose up -d db)
+docker compose config             # valida o .env
 bin/rails db:prepare
 yarn build && yarn build:css
-bin/dev                           # server + assets (Procfile.dev)
+bin/dev                           # server + assets + maildev (porta 3000)
 ```
 
-Testes:
+Com o banco vazio a raiz redireciona para `admin.localhost:3000/setup/new`
+(primeiro acesso). Testes e lint:
 
 ```bash
-bin/rails test                    # ou: bundle exec rspec
+bundle exec rspec          # ou bin/rails test
 bundle exec rubocop
 ```
 
-## Variáveis de ambiente
+## Documentação
 
-Copie `.env.sample` para `.env` (ignorado pelo Git) e preencha:
+| Documento | O que cobre |
+|---|---|
+| [docs/development.md](docs/development.md) | Setup de desenvolvimento na máquina: dependências, `.env`, Supabase local, storage, subir a app, testes e troubleshooting |
+| [docs/deploy.md](docs/deploy.md) | Docker/Compose do zero: `.env` obrigatório, `docker compose config`, build, subir a stack, variáveis de produção e segurança |
+| [docs/environment.md](docs/environment.md) | Referência de **todas as variáveis de ambiente**: o que é obrigatório, quem lê cada uma e onde obter os valores |
+| [docs/initial_setup.md](docs/initial_setup.md) | **Configurações iniciais no site**: setup do primeiro tenant, papéis, empresas, usuários, cursos, turmas e certificados |
 
-| Variável | Obrigatória | Descrição |
-|---|---|---|
-| `DATABASE_URL` | Sim | Conexão Postgres **sem o nome do banco** (o `config/database.yml` define o nome por ambiente). Local: `postgres://postgres:postgres@localhost:5432` |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` / `POSTGRES_PORT` | Não | Só para o `docker-compose.yml` (serviço `db`); defaults `postgres` / `postgres` / `educator_lms_development` / `5432` |
-| `RAILS_ENV` | Não | `development` / `test` / `production` (padrão: development) |
-| `RAILS_MASTER_KEY` | Em produção | Descriptografa `config/credentials.yml.enc` |
-| `REDIS_URL` | Sim | Redis para Action Cable (`config/cable.yml`) |
-| `RESEND_API_KEY` | Sim | Chave de API do Resend (envio de e-mail) |
-| `EMAIL_ADMINISTRATION_SYSTEM` | Sim | Remetente padrão dos e-mails (ex.: `no-reply@seudominio.com`) |
-| `EMAIL_HOST` | Sim | Host usado nos links dos e-mails (ex.: `educator.app.br`, `localhost:3000`) |
-| `SUPABASE_STORAGE_ENDPOINT` | Em produção | Endpoint S3 do Supabase (Active Storage `:supabase`) |
-| `SUPABASE_KEY` | Em produção | Access key ID do S3 do Supabase |
-| `SUPABASE_KEY_SECRET` | Em produção | Secret access key do S3 do Supabase |
-| `WEB_CONCURRENCY` | Não | Workers do Puma em produção (padrão: nº de CPUs) |
-| `RAILS_LOG_LEVEL` | Não | `info` / `debug` (padrão: `info`) |
-| `RAILS_MAX_THREADS` / `RAILS_MIN_THREADS` | Não | Threads do Puma (padrão: `5`) |
-| `RAILS_DEVELOPMENT_HOST` | Não | Host liberado em development (padrão: `localhost:3000`) |
-| `PORT` | Não | Porta do servidor (padrão: `3000`) |
-| `AZURE_ACTIVE_STORAGE` | Não | Só se usar o serviço `:microsoft` — não é o default |
+## Estrutura do projeto
 
-### Como obter cada variável
+```
+app/
+  controllers/    multi-tenant por subdomínio (setup, companies, courses, users...)
+  models/         Company, Course, CourseClass, Certificate, User, Role...
+  views/          Hotwire/Tailwind (app/assets/builds via yarn build)
+  mailers/        UserMailer, WrongDomainMailer (Resend)
+app/services/     Setup::CreateService, CourseCompletionService, PDF do certificado
+config/           database.yml (nome por ambiente), storage.yml (:supabase/:local)
+db/               schema.rb (19 tabelas), migrations, seeds (vazio por design)
+docs/             guias desta pasta
+Dockerfile        imagem de produção (multi-stage), usada também pelo compose
+docker-compose.yml  lê 100% do .env — nada digitado no arquivo
+.env.sample       modelo das variáveis de ambiente
+```
 
-- **`DATABASE_URL`** — Local: use o Postgres do `docker compose up -d db` (credenciais em `.env`: `POSTGRES_USER` / `POSTGRES_PASSWORD`) e **remova o nome do banco** do fim da URL. Produção: painel do Render → *Databases* → *Connection strings* → *External* (nessa use a URL como ela vem, com o banco).
-- **`POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` / `POSTGRES_PORT`** — Só usados pelo `docker-compose.yml` (serviço `db`). Use os mesmos valores do `DATABASE_URL` local; o default é `postgres` / `postgres` / `educator_lms_development` / `5432`.
-- **`RAILS_MASTER_KEY`** — Chave que descriptografa `config/credentials.yml.enc` (o `config/master.key` é ignorado pelo Git). Se você já tem o arquivo `config/master.key` localmente, copie o valor. Senão, em uma cópia do projeto que tenha a chave: `bin/rails credentials:show`. **Atenção:** sem essa chave os credentials não podem ser recuperados — guarde em um cofre.
-- **`RESEND_API_KEY`** — [resend.com](https://resend.com) → *API Keys* → *Create Key*.
-- **`EMAIL_ADMINISTRATION_SYSTEM`** — No Resend: *Domains* → adicionar e verificar o domínio do remetente; o endereço precisa pertencer a um domínio verificado.
-- **`EMAIL_HOST`** — Domínio público onde a app roda (produção: `educator.app.br` / `aprenda.seetech.com.br`; local: `localhost:3000`).
-- **`SUPABASE_*`** — Supabase Dashboard → *Project Settings* → *Storage* → *S3 API* → *Create new credentials*. O endpoint tem o formato `https://<project-ref>.storage.supabase.co/storage/v1/s3`. O bucket usado é `contents-class` (`config/storage.yml`).
-- **`REDIS_URL`** — Local: `redis://localhost:6379/1`. Produção: Upstash Redis, Render Redis ou similar.
-- **`AZURE_ACTIVE_STORAGE`** — Azure Portal → *Storage account* → *Access keys* (apenas se usar o serviço `:microsoft`).
+## Licença
 
-## Estrutura
-
-- `app/` — controllers, models, views, mailers (multi-tenant por `Company`/subdomínio)
-- `db/migrate/` — migrations (schema em `db/schema.rb`)
-- `spec/` / `test/` — testes
-- `Dockerfile` (produção; também usado pelo `docker-compose.yml`) e `docker-compose.yml`
+Privada — todos os direitos reservados.
