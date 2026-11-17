@@ -10,6 +10,8 @@ LMS multi-tenant (Rails 7 + Hotwire + Tailwind) com autenticação por subdomín
 
 ## Setup local
 
+> Passo a passo detalhado (dependências, `.env`, Supabase local, troubleshooting): [`development.md`](development.md).
+
 ```bash
 mise install                      # instala versões do .tool-versions
 cp .env.sample .env               # e preencha as variáveis (ver tabela abaixo)
