@@ -24,6 +24,16 @@ RSpec.describe UserMailer, type: :mailer do
       expect(mail.subject).to eq("Valide o seu email")
       expect(mail.body.encoded).to include("verify-company")
     end
+
+    it "falls back to the company created by the setup when the user has none" do
+      create(:company, subdomain: Company::DEFAULT_SUBDOMAIN)
+      user = create(:user)
+
+      mail = described_class.with(user: user).email_verification
+
+      expect(mail.to).to eq([user.email])
+      expect(mail.body.encoded).to include(Company::DEFAULT_SUBDOMAIN)
+    end
   end
 
   describe "#new_user" do
@@ -36,6 +46,17 @@ RSpec.describe UserMailer, type: :mailer do
 
       expect(mail.to).to eq([owner.email])
       expect(mail.subject).to eq("Cadastro de novo funcionário")
+      expect(mail.body.encoded).to include(user.full_name)
+    end
+
+    it "notifies the owner of the setup company when the user has none" do
+      setup_company = create(:company, subdomain: Company::DEFAULT_SUBDOMAIN)
+      owner = create(:user, company: setup_company, role: :company, email: "setup-owner@example.test")
+      user = create(:user)
+
+      mail = described_class.with(user: user).new_user
+
+      expect(mail.to).to eq([owner.email])
       expect(mail.body.encoded).to include(user.full_name)
     end
   end

@@ -6,7 +6,7 @@ class WrongDomainsController < ApplicationController
   def show
     redirect_to sign_in_path and return if Company.exists?(subdomain: tenant_subdomain)
 
-    @admin_company = Company.find_by(subdomain: "admin")
+    @admin_company = Company.default
     @contact = contact_params.merge(subdomain: tenant_subdomain)
   end
 

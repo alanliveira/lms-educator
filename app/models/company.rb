@@ -1,7 +1,16 @@
 class Company < ApplicationRecord
   acts_as_paranoid
 
+  # Subdomain of the company created by the initial setup (see SetupController).
+  # It is also the fallback company used whenever a record has no company yet.
+  DEFAULT_SUBDOMAIN = "admin".freeze
+
   has_one_attached :logo
+
+  # The company created by the initial setup, used as the system default.
+  def self.default
+    find_by(subdomain: DEFAULT_SUBDOMAIN)
+  end
 
   validates :logo,
             content_type: %w[image/png image/jpeg image/webp],

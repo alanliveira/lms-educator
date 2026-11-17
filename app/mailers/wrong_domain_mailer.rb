@@ -12,7 +12,7 @@ class WrongDomainMailer < ApplicationMailer
   private
 
   def admin_recipients
-    admin_company = Company.find_by(subdomain: "admin")
+    admin_company = Company.default
     recipients = admin_company&.users&.with_role(:admin)&.pluck(:email)
     recipients = User.with_role(:admin).pluck(:email) if recipients.blank?
     recipients.presence || [ENV.fetch("EMAIL_ADMINISTRATION_SYSTEM")]

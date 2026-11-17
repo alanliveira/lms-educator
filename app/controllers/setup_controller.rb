@@ -14,6 +14,9 @@ class SetupController < ApplicationController
     @owner = creation.owner
 
     if creation.call
+      # The setup only runs on the `admin` subdomain (enforced by
+      # ApplicationController#redirect_to_initial_setup), so this redirect stays
+      # on the same host and Turbo can follow it.
       redirect_to sign_in_path, notice: "Empresa e usuário administrador criados com sucesso."
     else
       render :new, status: :unprocessable_content
@@ -27,7 +30,7 @@ class SetupController < ApplicationController
   end
 
   def build_setup_records
-    @company = Company.new(subdomain: "admin")
+    @company = Company.new(subdomain: Company::DEFAULT_SUBDOMAIN)
     @owner = User.new
   end
 

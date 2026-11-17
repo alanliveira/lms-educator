@@ -3,7 +3,7 @@ module Setup
     attr_reader :company, :owner
 
     def initialize(company_attributes:, owner_attributes:)
-      @company = Company.new(company_attributes.merge(subdomain: 'admin'))
+      @company = Company.new(company_attributes.merge(subdomain: Company::DEFAULT_SUBDOMAIN))
       @owner = User.new(owner_attributes.merge(active: true, verified: true))
     end
 

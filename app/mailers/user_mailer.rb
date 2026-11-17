@@ -13,7 +13,7 @@ class UserMailer < ApplicationMailer
   def email_verification
     @user = params[:user]
     @signed_id = @user.generate_token_for(:email_verification)
-    @company_subdomain = @user&.company&.subdomain || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).subdomain
+    @company_subdomain = company_for(@user)&.subdomain
     @company_host = company_host(@company_subdomain)
 
     mail to: @user.email, subject: "Valide o seu email"
@@ -21,13 +21,21 @@ class UserMailer < ApplicationMailer
 
   def new_user
     @user = params[:user]
-    @company_subdomain = @user&.company&.subdomain || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).subdomain
-    @owner_user = @user&.company&.owner || Company.find(ENV.fetch('COMPANY_DEFAULT_ID').to_i).owner
+    company = company_for(@user)
+    @company_subdomain = company&.subdomain
+    @owner_user = company&.owner
+    return if @owner_user.blank?
 
     mail to: @owner_user.email, subject: "Cadastro de novo funcionário"
   end
 
   private
+
+  # The user's own company, falling back to the company created by the
+  # initial setup (Company.default) — no environment variable involved.
+  def company_for(user)
+    user&.company || Company.default
+  end
 
   def company_host(subdomain)
     [subdomain, ENV.fetch("EMAIL_HOST")].compact_blank.join(".")

@@ -45,7 +45,7 @@ module Identity
     end
 
     def set_brand_company
-      @company = Current.company || Company.find_by(subdomain: "admin")
+      @company = Current.company || Company.default
     end
   end
 end

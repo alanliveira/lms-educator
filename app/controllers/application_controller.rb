@@ -22,7 +22,27 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_initial_setup
-    redirect_to new_setup_path if initial_setup_required? && controller_path != "setup"
+    return unless initial_setup_required?
+
+    # The initial setup is only served on the `admin` subdomain, so every other
+    # host (apex included) is sent there before anything else happens.
+    return if controller_path == "setup" && tenant_subdomain == Company::DEFAULT_SUBDOMAIN
+
+    redirect_to new_setup_url(host: admin_host, protocol: request.protocol), allow_other_host: true
+  end
+
+  # Host used for the `admin` tenant: `EMAIL_HOST` when configured (same
+  # convention as UserMailer#company_host) or the current request host without
+  # its subdomain prefix.
+  def admin_host
+    "#{Company::DEFAULT_SUBDOMAIN}.#{ENV.fetch('EMAIL_HOST', nil).presence || request_base_host}"
+  end
+
+  def request_base_host
+    host_with_port = request.host_with_port
+    return host_with_port if tenant_subdomain.blank?
+
+    host_with_port.delete_prefix("#{tenant_subdomain}.")
   end
 
   def initial_setup_required?
