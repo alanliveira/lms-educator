@@ -18,17 +18,21 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  url: <%= ENV["DATABASE_URL"] %>
 
 development:
   <<: *default
-  database: aprenda_web_development
+  url: <%= ENV["DATABASE_URL"] %>
+  database: educator_lms_development
 test:
   <<: *default
-  database: aprenda_web_test
+  # The Rails merges DATABASE_URL over database.yml for the current environment,
+  # so this URL must NOT include a database name — otherwise it would win over
+  # the `database:` key below and the suite would run against another database
+  # (e.g. development). The name is defined here, per environment.
+  url: <%= ENV["DATABASE_URL"] %>
+  database: educator_lms_test
 
 production:
   <<: *default
-  database: aprenda_web_production
-  # username: aprenda_web
-  # password: <%= ENV["APRENDA_WEB_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
+  database: educator_lms_production

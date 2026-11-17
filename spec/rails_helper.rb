@@ -4,11 +4,18 @@ ENV['RAILS_ENV'] ||= 'test'
 ENV['RESEND_API_KEY'] ||= 'test-resend-api-key'
 ENV['EMAIL_ADMINISTRATION_SYSTEM'] ||= 'admin@example.test'
 ENV['EMAIL_HOST'] ||= 'example.test'
-ENV['COMPANY_DEFAULT_ID'] ||= '0'
-ENV['DATABASE_URL'] = ENV.fetch('TEST_DATABASE_URL', 'postgres://postgres:postgres@localhost:5432/educator_lms_test')
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+# DATABASE_URL must not carry a database name: it is merged over
+# config/database.yml and would make the suite run against another database
+# (development, usually). Fail fast instead of touching the wrong data.
+test_database = ActiveRecord::Base.connection_db_config.database.to_s
+unless test_database.end_with?("_test")
+  abort "Specs would run against #{test_database.inspect}. " \
+        "Remove the database name from DATABASE_URL in .env — " \
+        "config/database.yml defines it per environment."
+end
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
