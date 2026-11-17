@@ -34,8 +34,10 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Same storage as production (S3 API of the local Supabase stack — see
+  # config/storage.yml and .env). Falls back to Disk when SUPABASE_STORAGE_ENDPOINT
+  # is blank, so the app still boots without Supabase.
+  config.active_storage.service = ENV.fetch("SUPABASE_STORAGE_ENDPOINT", "").presence ? :supabase : :local
 
   config.action_mailer.delivery_method = :smtp
 

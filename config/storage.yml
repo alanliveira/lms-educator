@@ -13,10 +13,14 @@ local:
 #   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
 #   region: us-east-1
 #   bucket: your_own_bucket-<%= Rails.env %>
+
 supabase:
   service: S3
   endpoint: <%= ENV.fetch('SUPABASE_STORAGE_ENDPOINT', '').inspect %>
-  region: sa-east-1
+  # Same bucket as production. The region is part of the SigV4 signature:
+  # the local stack uses "local" (supabase status -o env → S3_PROTOCOL_REGION),
+  # hosted Supabase uses "sa-east-1".
+  region: <%= ENV.fetch('SUPABASE_STORAGE_REGION', 'sa-east-1').inspect %>
   bucket: contents-class
   access_key_id: <%= ENV.fetch('SUPABASE_KEY', '').inspect %>
   secret_access_key: <%= ENV.fetch('SUPABASE_KEY_SECRET', '').inspect %>
@@ -28,13 +32,6 @@ supabase:
 #   project: your_project
 #   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
 #   bucket: your_own_bucket-<%= Rails.env %>
-
-# Use bin/rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
-microsoft:
-  service: AzureStorage
-  storage_account_name: 'aprendawebproduction'
-  storage_access_key: <%= ENV.fetch('AZURE_ACTIVE_STORAGE', '') %>
-  container: 'files-aprenda'
 
 # mirror:
 #   service: Mirror
